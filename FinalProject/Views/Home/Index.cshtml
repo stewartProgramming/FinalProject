@@ -1,0 +1,9 @@
+﻿@model List<Club>
+
+@foreach (Club c in Model)
+{
+    <p>Name: @c.name</p>
+    <p>Country: @c.country</p>
+    <p>Code: @c.code</p>
+    <br />
+}
