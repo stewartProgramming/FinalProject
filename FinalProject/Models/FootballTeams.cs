@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FinalProject.Models
 {
-    public class Rootobject
+    public class FootballClubs
     {
         public string name { get; set; }
         public List<Club> clubs { get; set; }

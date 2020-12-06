@@ -20,12 +20,30 @@ namespace FinalProject.Models
             return output;
         }
 
+        public static string CallMatchAPI()
+        {
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2019-20/cl.json";
+            HttpWebRequest request = WebRequest.CreateHttp(url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader rd = new StreamReader(response.GetResponseStream());
+            string output = rd.ReadToEnd();
+            return output;
+        }
+
         public static List<Club> GetTeams()
         {
             string data = CallTeamAPI();
-            Rootobject r = JsonConvert.DeserializeObject<Rootobject>(data);
+            FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
             List<Club> clubs = r.clubs.ToList();
             return clubs;
+        }
+
+        public static List<Match> GetMatches()
+        {
+            string data = CallMatchAPI();
+            FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
+            List<Match> matches = r.matches.ToList();
+            return matches;
         }
     }
 }

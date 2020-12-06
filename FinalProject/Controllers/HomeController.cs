@@ -23,6 +23,12 @@ namespace FinalProject.Controllers
             List<Club> clubs = FootballDAL.GetTeams();
             return View(clubs);
         }
+        
+        public IActionResult Matches()
+        {
+            List<Match> clubs = FootballDAL.GetMatches();
+            return View(clubs);
+        }
 
         public IActionResult Privacy()
         {
