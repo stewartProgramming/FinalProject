@@ -1,0 +1,39 @@
+﻿@model List<Club>
+
+@{
+    ViewData["Title"] = "LeagueTeams";
+}
+
+<h1>League Teams</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].code)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.code)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

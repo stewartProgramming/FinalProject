@@ -17,13 +17,25 @@ namespace FinalProject.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
-            List<Club> clubs = FootballDAL.GetTeams();
+            return View();
+        }
+
+        public IActionResult RecentHighlights()
+        {
+            List<Highlight> highlights = FootballDAL.GetHighlights();
+            return View(highlights);
+        }
+
+        [HttpPost]
+        public IActionResult LeagueTeams(string league, string season)
+        {
+            List<Club> clubs = FootballDAL.GetTeams(league, season);
             return View(clubs);
         }
-        
+
         public IActionResult Matches()
         {
             List<Match> clubs = FootballDAL.GetMatches();
