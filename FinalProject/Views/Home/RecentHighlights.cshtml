@@ -1,0 +1,51 @@
+﻿@model List<Highlight>
+
+@{
+    ViewData["Title"] = "RecentHighlights";
+}
+
+<h1>Recent Football Highlights</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].embed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].url)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].thumbnail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.embed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.url)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.thumbnail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.date)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

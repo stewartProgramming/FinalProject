@@ -1,9 +1,21 @@
-﻿@model List<Club>
-
-@foreach (Club c in Model)
-{
-    <p>Name: @c.name</p>
-    <p>Country: @c.country</p>
-    <p>Code: @c.code</p>
-    <br />
-}
+﻿<form asp-controller="Home" asp-action="LeagueTeams">
+    <p>
+        <label for="league">Select league</label>
+        <select name="league" id="league">
+            <option value="en.1">England</option>
+            <option value="es.1">Spain</option>
+            <option value="de.1">Germany</option>
+            <option value="it.1">Italy</option>
+            <option value="fr.1">France</option>
+            <option value="cl">Champions League</option>
+        </select>
+        <select name="season" id="season">
+            <option value="2020-21">2020/2021</option>
+            <option value="2019-20">2019/2020</option>
+        </select>
+        <input type="submit" />
+    </p>
+</form>
+<form asp-controller="Home" asp-action="RecentHighlights">
+    <input type="submit" value="Recent Highlights"/>
+</form>
