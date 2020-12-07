@@ -4,48 +4,38 @@
     ViewData["Title"] = "RecentHighlights";
 }
 
-<h1>Recent Football Highlights</h1>
+
+<h1 style="text-align:center">Recent Football Highlights</h1>
 
 <table class="table">
     <thead>
-        <tr>
+        <tr style="text-align:center">
             <th>
-                @Html.DisplayNameFor(model => model[0].title)
+                Match
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].embed)
+            <th style="padding: 2px 200px 2px 200px;">
+                Hightlight Video
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].url)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].thumbnail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].date)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.embed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.url)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.thumbnail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.date)
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr style="text-align:center">
+                <td>
+                    @Html.DisplayFor(modelItem => item.competition.name)
+                    <br />
+                    @Html.DisplayFor(modelItem => item.title)
+                    <br />
+                    @Html.DisplayFor(modelItem => item.date)
+                </td>
+                <td>
+                    @foreach (var v in item.videos)
+                    {
+                        @Html.Raw(v.embed)
+                    }
+                </td>
+            </tr>
+            }
     </tbody>
 </table>
