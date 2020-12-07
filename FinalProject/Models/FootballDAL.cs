@@ -63,9 +63,8 @@ namespace FinalProject.Models
         public static List<Highlight> GetHighlights()
         {
             string data = CallHighlightAPI();
-            FootballHighlights r = JsonConvert.DeserializeObject<FootballHighlights>(data);
-            List<Highlight> highlights = r.Property1.ToList();
-            return highlights;
+            List<Highlight> r = JsonConvert.DeserializeObject<List<Highlight>>(data);
+            return r;
         }
 
         public static List<Match> GetMatches()
