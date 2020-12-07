@@ -42,7 +42,17 @@ namespace FinalProject.Models
 
         public static string CallMatchAPI()
         {
-            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-21/en.1.json";
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-2021/en.1.json";
+            HttpWebRequest request = WebRequest.CreateHttp(url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader rd = new StreamReader(response.GetResponseStream());
+            string output = rd.ReadToEnd();
+            return output;
+        }
+
+        public static string CallMatchAPI(string league, string season)
+        {
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.json";
             HttpWebRequest request = WebRequest.CreateHttp(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader rd = new StreamReader(response.GetResponseStream());
@@ -70,6 +80,14 @@ namespace FinalProject.Models
         public static List<Match> GetMatches()
         {
             string data = CallMatchAPI();
+            FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
+            List<Match> matches = r.matches.ToList();
+            return matches;
+        }
+
+        public static List<Match> GetMatches(string league, string season)
+        {
+            string data = CallMatchAPI(league, season);
             FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
             List<Match> matches = r.matches.ToList();
             return matches;

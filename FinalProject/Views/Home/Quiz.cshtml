@@ -1,0 +1,37 @@
+﻿@model Match
+
+@{
+    ViewData["Title"] = "Quiz";
+}
+
+<h1>Test Your Football Knowledge</h1>
+
+
+
+<h2>Match-Up</h2>
+<p>Date of Match: @Model.date</p>
+<p>@Model.team1 vs. @Model.team2</p>
+
+@if (!string.IsNullOrEmpty(ViewBag.Result))
+{
+    <h1 style="color:red">@ViewBag.Result</h1>
+}
+else
+{
+
+    <p>Which team won? Or was it a tie?</p>
+
+    <form asp-action="Quiz" asp-controller="Home" method="post">
+
+        <input type="hidden" name="team1" value="@Model.team1" />
+        <input type="hidden" name="team2" value="@Model.team2" />
+        <input type="hidden" name="date" value="@Model.date" />
+        <input type="hidden" name="score.ft" value="@Model.score.ft[0]" />
+        <input type="hidden" name="score.ft" value="@Model.score.ft[1]" />
+
+        <input type="radio" name="answer" value="@Model.team1" />
+        <input type="radio" name="answer" value="@Model.team2" />
+        <input type="radio" name="answer" value="Tie" />
+        <input type="submit" value="Submit answer" />
+    </form>
+}

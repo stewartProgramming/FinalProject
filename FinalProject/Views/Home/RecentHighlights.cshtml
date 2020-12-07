@@ -4,6 +4,11 @@
     ViewData["Title"] = "RecentHighlights";
 }
 
+@{
+    List<Highlight> fullList = Model;
+    var firstFiveHighlights = fullList.Take(5);
+    fullList.RemoveRange(0, 4);
+    }
 
 <h1 style="text-align:center">Recent Football Highlights</h1>
 
@@ -14,12 +19,12 @@
                 Match
             </th>
             <th style="padding: 2px 200px 2px 200px;">
-                Hightlight Video
+                Highlight Video
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in firstFiveHighlights)
         {
             <tr style="text-align:center">
                 <td>
@@ -36,6 +41,6 @@
                     }
                 </td>
             </tr>
-            }
+        }
     </tbody>
 </table>

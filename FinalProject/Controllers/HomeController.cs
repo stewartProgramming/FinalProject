@@ -42,6 +42,44 @@ namespace FinalProject.Controllers
             return View(clubs);
         }
 
+        [HttpGet]
+        public IActionResult Quiz(string league, string season)
+        {
+            List<Match> matches = FootballDAL.GetMatches(league, season);
+
+            var random = new Random();
+            var question = random.Next(matches.Count);
+
+            // Do the random math in here. Send only a single match to the view
+            return View(matches[question]);
+        }
+
+        [HttpPost]
+        public IActionResult Quiz(Match matchResult, string answer)
+        {
+            //var winner = "";
+
+            //if(team1score > team2score)
+            //{
+            //    winner = team1;
+            //}
+            //else
+            //{
+            //    winner = team2;
+            //}
+
+            //if(answer.Contains(winner))
+            //{
+                ViewBag.Result = "Winner winner chicken dinner!";
+            //}
+            //else
+            //{
+            //    ViewBag.Result = "Loser loser, pick your snoozer";
+            //}
+
+            return View(matchResult);
+        }
+
         public IActionResult Privacy()
         {
             return View();
