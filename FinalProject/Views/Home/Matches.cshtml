@@ -2,10 +2,14 @@
 
 @foreach (Match m in Model)
 {
-    <p>Group: @m.group</p>
-    <p>Round: @m.round</p>
-    <p>Date: @m.date</p>
-    <p>@m.team1 - @m.team2</p>
-    <p>@m.score.ft </p>
-    <br />
+    if (m.score != null)
+    {
+        <p>Group: @m.group</p>
+        <p>Round: @m.round</p>
+        <p>Date: @m.date</p>
+        <p>@m.team1 - @m.team2</p>
+        <p>@m.score.ft[0] </p>
+        <br />
+    }
+
 }
