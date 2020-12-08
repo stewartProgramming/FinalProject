@@ -4,7 +4,6 @@
     ViewData["Title"] = "RecentHighlights";
 }
 
-
 <h1 style="text-align:center">Recent Football Highlights</h1>
 
 <table class="table">
@@ -40,27 +39,43 @@
     </tbody>
 </table>
 
-@*buttons*@
-@{ 
+@*navigation*@
+@{
     int pageNum = ViewBag.pageCount;
+    int numOfpages = ViewBag.listCount;
+
+    int p = pageNum >= 2 ? pageNum - 1 : pageNum;
+    int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
     int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
-    int next = pageNum <= 4 ? pageNum + 1 : pageNum;
+
+    int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
+    int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
+    int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
 }
 
 <form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
-    <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
-    <input class="btn-outline-info" name="page" type="submit" value="1" />
-    <input class="btn-outline-info" name="page" type="submit" value="2" />
-    <input class="btn-outline-info" name="page" type="submit" value="3" />
-    <input class="btn-outline-info" name="page" type="submit" value="4" />
-    <input class="btn-outline-info" name="page" type="submit" value="5" />
-    <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
-</form>
+    @{
+        if (pageNum >= 2)
+        {
+            <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
 
-@*<a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="page --">&laquo; Previous </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="1"> 1 </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="2"> 2 </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="3"> 3 </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="4"> 4 </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="5"> 5 </a>
-    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="page ++"> Next &raquo;</a>*@
+            @if (pageNum != pr)
+            {
+                <input class="btn-outline-info" name="page" type="submit" value="@pr" />
+            }
+            <input class="btn-outline-info" name="page" type="submit" value="@p" />
+        }
+    }
+    <input class="btn-info" name="page" type="submit" value="@pageNum" />
+    @{
+        if (pageNum < numOfpages)
+        {
+            <input class="btn-outline-info" name="page" type="submit" value="@n" />
+            @if (pageNum != ne)
+            {
+                <input class="btn-outline-info" name="page" type="submit" value="@ne" />
+            }
+            <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
+        }
+    }
+</form>
