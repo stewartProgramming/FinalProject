@@ -17,7 +17,7 @@ namespace FinalProject.Controllers
         {
             _logger = logger;
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -47,42 +47,54 @@ namespace FinalProject.Controllers
         {
             List<Match> matches = FootballDAL.GetMatches(league, season);
 
-            var random = new Random();
-            var question = random.Next(matches.Count);
+            Random r = new Random();
+            int index = r.Next(matches.Count);
 
-            // Do the random math in here. Send only a single match to the view
-            return View(matches[question]);
+            Match match = matches[index];
+
+            // Still needs to successfully check if score is null
+            while (match.score == null)
+            {
+                index = r.Next(matches.Count);
+                match = matches[index];
+            }
+
+            TempData["League"] = league;
+            TempData["Season"] = season;
+            TempData["MatchIndex"] = index;
+            return View(match);
         }
 
         [HttpPost]
-        public IActionResult Quiz(Match matchResult, string answer)
+        public IActionResult QuizResult(int index, string league, string season, string answer)
         {
-            //var winner = "";
+            List<Match> matches = FootballDAL.GetMatches(league, season);
+            Match match = matches[index];
 
-            //if(team1score > team2score)
-            //{
-            //    winner = team1;
-            //}
-            //else
-            //{
-            //    winner = team2;
-            //}
+            var winner = "";
 
-            //if(answer.Contains(winner))
-            //{
-                ViewBag.Result = "Winner winner chicken dinner!";
-            //}
-            //else
-            //{
-            //    ViewBag.Result = "Loser loser, pick your snoozer";
-            //}
+            if (match.score.ft[0] > match.score.ft[1])
+            {
+                winner = "team1";
+            }
+            else if (match.score.ft[0] < match.score.ft[1])
+            {
+                winner = "team2";
+            }
+            else if (match.score.ft[0] == match.score.ft[1])
+            {
+                winner = "tie";
+            }
 
-            return View(matchResult);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            if (answer == winner)
+            {
+                ViewBag.Result = "Congratulations! You really know your football trivia.";
+            }
+            else
+            {
+                ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
+            }
+            return View(match);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

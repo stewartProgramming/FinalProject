@@ -6,32 +6,39 @@
 
 <h1>Test Your Football Knowledge</h1>
 
-
+<hr />
 
 <h2>Match-Up</h2>
-<p>Date of Match: @Model.date</p>
-<p>@Model.team1 vs. @Model.team2</p>
 
-@if (!string.IsNullOrEmpty(ViewBag.Result))
-{
-    <h1 style="color:red">@ViewBag.Result</h1>
-}
-else
-{
+<br />
 
-    <p>Which team won? Or was it a tie?</p>
+<p>Date of Match: <b>@Model.date</b></p>
+<p><b>@Model.team1</b> vs. <b>@Model.team2</b></p>
 
-    <form asp-action="Quiz" asp-controller="Home" method="post">
+<p>Which team won? Or was it a tie?</p>
 
-        <input type="hidden" name="team1" value="@Model.team1" />
-        <input type="hidden" name="team2" value="@Model.team2" />
-        <input type="hidden" name="date" value="@Model.date" />
-        <input type="hidden" name="score.ft" value="@Model.score.ft[0]" />
-        <input type="hidden" name="score.ft" value="@Model.score.ft[1]" />
+<form asp-action="QuizResult" asp-controller="Home" method="post">
 
-        <input type="radio" name="answer" value="@Model.team1" />
-        <input type="radio" name="answer" value="@Model.team2" />
-        <input type="radio" name="answer" value="Tie" />
-        <input type="submit" value="Submit answer" />
-    </form>
-}
+    <input type="hidden" name="team1" value="@Model.team1" />
+    <input type="hidden" name="team2" value="@Model.team2" />
+    <input type="hidden" name="date" value="@Model.date" />
+    <input type="hidden" name="index" value="@TempData["MatchIndex"]" />
+    <input type="hidden" name="league" value="@TempData["League"]" />
+    <input type="hidden" name="season" value="@TempData["Season"]" />
+
+    <label>
+        <input type="radio" name="answer" value="team1" /> @Model.team1 &ensp;
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="team2" /> @Model.team2 &ensp;
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="tie" /> Tie
+    </label>
+
+    <br /><br />
+
+    <input type="submit" value="Submit answer" />
+</form>
