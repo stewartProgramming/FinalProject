@@ -1,4 +1,5 @@
 ﻿using FinalProject.Models;
+using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,21 +13,30 @@ namespace FinalProject.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HighlightService _highlightService;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            _highlightService = new HighlightService();
         }
-        
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult RecentHighlights()
+        //figure out what list to display
+        public IActionResult RecentHighlights(int? page)
         {
-            List<Highlight> highlights = FootballDAL.GetHighlights();
-            return View(highlights);
+            List<List<Highlight>> list = _highlightService.GetHighlights();
+            if (page == null)
+            {
+                page = 1;
+            }
+            ViewBag.pageCount = page;
+            ViewBag.listCount = list.Count;
+            return View(list[(int)page - 1]);
         }
 
         [HttpPost]
