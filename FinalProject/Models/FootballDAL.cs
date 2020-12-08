@@ -10,39 +10,27 @@ namespace FinalProject.Models
 {
     public class FootballDAL
     {
-        public static string CallTeamAPI(string league, string season)
+        public static string CallTeamAPI(string league)
         {
-            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.clubs.json";
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-21/{league}.clubs.json";
             HttpWebRequest request = WebRequest.CreateHttp(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string output = "";
-            if (request != null)
-            {
-                StreamReader rd = new StreamReader(response.GetResponseStream());
-                output = rd.ReadToEnd();
-            }
-            else
-            {
-                output = "Invalid Season";
-            }
+            StreamReader rd = new StreamReader(response.GetResponseStream());
+            string output = rd.ReadToEnd();
             return output;
         }
 
-        public static List<Club> GetTeams(string league, string season)
+        public static List<Club> GetTeams(string league)
         {
-            string data = CallTeamAPI(league, season);
-            List<Club> clubs = new List<Club>();
-            if (data != "Invalid Season")
-            {
-                FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
-                clubs = r.clubs.ToList();
-            }
+            string data = CallTeamAPI(league);
+            FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
+            List<Club> clubs = r.clubs.ToList();
             return clubs;
         }
 
-        public static string CallMatchAPI()
+        public static string CallMatchAPI(string league)
         {
-            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-21/en.1.json";
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-21/{league}.json";
             HttpWebRequest request = WebRequest.CreateHttp(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader rd = new StreamReader(response.GetResponseStream());
@@ -67,9 +55,9 @@ namespace FinalProject.Models
             return r;
         }
 
-        public static List<Match> GetMatches()
+        public static List<Match> GetMatches(string league)
         {
-            string data = CallMatchAPI();
+            string data = CallMatchAPI(league);
             FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
             List<Match> matches = r.matches.ToList();
             return matches;
