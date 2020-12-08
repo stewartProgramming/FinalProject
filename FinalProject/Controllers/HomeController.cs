@@ -17,16 +17,50 @@ namespace FinalProject.Controllers
         {
             _logger = logger;
         }
-        
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult RecentHighlights()
+        //break Highlight list into lists of 10
+        public static List<List<Highlight>> SplitList(List<Highlight> highlights)
+        {
+            var list = new List<List<Highlight>>();
+
+            for (int i = 0; i < highlights.Count; i += 10)
+            {
+                list.Add(highlights.GetRange(i, Math.Min(10, highlights.Count - i)));
+            }
+            return list;
+        }
+        //figure out what page to display
+        //[HttpGet]
+        public IActionResult RecentHighlights(int? page)
         {
             List<Highlight> highlights = FootballDAL.GetHighlights();
-            return View(highlights);
+            List<List<Highlight>> list = SplitList(highlights).ToList();
+            if (page == null)
+            {
+                page = 1;
+            }
+            ViewBag.pageCount = page;
+
+            return View(list[(int)page - 1]);
+            //switch (page)
+            //{
+            //    case 1:
+            //        return View(list[0]);
+            //    case 2:
+            //        return View(list[1]);
+            //    case 3:
+            //        return View(list[2]);
+            //    case 4:
+            //        return View(list[3]);
+            //    case 5:
+            //        return View(list[4]);
+            //}
+            //return View();
         }
 
         [HttpPost]

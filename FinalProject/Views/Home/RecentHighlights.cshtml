@@ -36,6 +36,31 @@
                     }
                 </td>
             </tr>
-            }
+        }
     </tbody>
 </table>
+
+@*buttons*@
+@{ 
+    int pageNum = ViewBag.pageCount;
+    int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
+    int next = pageNum <= 4 ? pageNum + 1 : pageNum;
+}
+
+<form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
+    <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
+    <input class="btn-outline-info" name="page" type="submit" value="1" />
+    <input class="btn-outline-info" name="page" type="submit" value="2" />
+    <input class="btn-outline-info" name="page" type="submit" value="3" />
+    <input class="btn-outline-info" name="page" type="submit" value="4" />
+    <input class="btn-outline-info" name="page" type="submit" value="5" />
+    <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
+</form>
+
+@*<a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="page --">&laquo; Previous </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="1"> 1 </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="2"> 2 </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="3"> 3 </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="4"> 4 </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="5"> 5 </a>
+    <a asp-controller="Home" asp-action="RecentHighlights" href="#" name="page" value="page ++"> Next &raquo;</a>*@
