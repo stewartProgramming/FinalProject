@@ -1,0 +1,45 @@
+﻿@model List<FinalProject.Models.Match>
+
+@{
+    ViewData["Title"] = "MatchResults";
+}
+
+<h1>Favorite Team Match Results</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="text-align:center">
+                Matchday
+            </th>
+            <th style="text-align:center">
+                Home
+            </th>
+            <th style="text-align:center">
+                Away
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.round)
+                    <br />
+                    @Html.DisplayFor(modelItem => item.date)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.team1)
+                    <br />
+                    [@Html.DisplayFor(modelItem => item.score.ft[0])]
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.team2)
+                    <br />
+                    [@Html.DisplayFor(modelItem => item.score.ft[1])]
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

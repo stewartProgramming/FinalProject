@@ -3,13 +3,6 @@
 @{
     ViewData["Title"] = "RecentHighlights";
 }
-<script>
-
-    if (performance.navigation.type == 2) {
-      location.reload;
-    }
-
-</script>
 
 <h1 style="text-align:center">Recent Football Highlights</h1>
 
@@ -20,7 +13,7 @@
                 Match
             </th>
             <th style="padding: 2px 200px 2px 200px;">
-                Hightlight Video
+                Highlight Video
             </th>
         </tr>
     </thead>
@@ -42,6 +35,47 @@
                     }
                 </td>
             </tr>
-            }
+        }
     </tbody>
 </table>
+
+@*navigation*@
+@{
+    int pageNum = ViewBag.pageCount;
+    int numOfpages = ViewBag.listCount;
+
+    int p = pageNum >= 2 ? pageNum - 1 : pageNum;
+    int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
+    int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
+
+    int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
+    int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
+    int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
+}
+
+<form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
+    @{
+        if (pageNum >= 2)
+        {
+            <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
+
+            @if (pageNum != pr)
+            {
+                <input class="btn-outline-info" name="page" type="submit" value="@pr" />
+            }
+            <input class="btn-outline-info" name="page" type="submit" value="@p" />
+        }
+    }
+    <input class="btn-info" name="page" type="submit" value="@pageNum" />
+    @{
+        if (pageNum < numOfpages)
+        {
+            <input class="btn-outline-info" name="page" type="submit" value="@n" />
+            @if (pageNum != ne)
+            {
+                <input class="btn-outline-info" name="page" type="submit" value="@ne" />
+            }
+            <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
+        }
+    }
+</form>
