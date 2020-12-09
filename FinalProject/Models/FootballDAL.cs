@@ -10,9 +10,9 @@ namespace FinalProject.Models
 {
     public class FootballDAL
     {
-        public static string CallTeamAPI(string league)
+        public static string CallTeamAPI(string league, string season)
         {
-            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/2020-21/{league}.clubs.json";
+            string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.clubs.json";
             HttpWebRequest request = WebRequest.CreateHttp(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader rd = new StreamReader(response.GetResponseStream());
@@ -20,9 +20,9 @@ namespace FinalProject.Models
             return output;
         }
 
-        public static string CallStandingsAPI(string league)
+        public static string CallStandingsAPI(string league, string season)
         {
-            string url = $"https://api-football-beta.p.rapidapi.com/standings?season=2020&league={league}";
+            string url = $"https://api-football-beta.p.rapidapi.com/standings?season={season}&league={league}";
             HttpWebRequest request = WebRequest.CreateHttp(url);
             request.Headers.Add("x-rapidapi-key", "8ee6bb1f97msh72388712e57f0eep108ff5jsnb7ec224de70c");
             request.Headers.Add("x-rapidapi-host", "api-football-beta.p.rapidapi.com");
@@ -32,7 +32,7 @@ namespace FinalProject.Models
             return output;
         }
 
-        public static FootballStandings GetStandings(string league)
+        public static FootballStandings GetStandings(string league, string season)
         {
             if (league == "en.1")
             {
@@ -55,14 +55,23 @@ namespace FinalProject.Models
                 league = "61";
             }
 
-            string data = CallStandingsAPI(league);
+            if (season == "2019-20")
+            {
+                season = "2019";
+            }
+            else if (season == "2020-21")
+            {
+                season = "2020";
+            }
+
+            string data = CallStandingsAPI(league, season);
             FootballStandings s = JsonConvert.DeserializeObject<FootballStandings>(data);
             return s;
         }
 
-        public static FootballClubs GetTeams(string league)
+        public static FootballClubs GetTeams(string league, string season)
         {
-            string data = CallTeamAPI(league);
+            string data = CallTeamAPI(league, season);
             FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
             return r;
         }
@@ -95,21 +104,21 @@ namespace FinalProject.Models
         }
 
 
-        //public static FootballMatches GetMatches(string league)
-        //{
-        //    string data = CallMatchAPI(league);
-        //    FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
-        //    FootballMatches matches = r;
-        //    return matches;
-        //}
-
-
-        public static List<Match> GetMatches(string league, string season)
+        public static FootballMatches GetMatches(string league, string season)
         {
             string data = CallMatchAPI(league, season);
             FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
-            List<Match> matches = r.matches.ToList();
+            FootballMatches matches = r;
             return matches;
         }
+
+
+        //public static List<Match> GetMatches(string league, string season)
+        //{
+        //    string data = CallMatchAPI(league, season);
+        //    FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
+        //    List<Match> matches = r.matches.ToList();
+        //    return matches;
+        //}
     }
 }
