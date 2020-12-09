@@ -39,6 +39,33 @@ namespace FinalProject.Controllers
             return View(list[(int)page - 1]);
         }
 
+        public IActionResult SearchHighlights(string searchFor, int? page)
+        {
+            List<Highlight> highlights = FootballDAL.GetHighlights();
+            List<Highlight> searchResults = new List<Highlight> { };
+
+            foreach (var video in highlights)
+            {
+                if (video.competition.name.ToLower().Contains(searchFor.ToLower()))
+                {
+                    searchResults.Add(video);
+                }
+                if (video.title.ToLower().Contains(searchFor.ToLower()))
+                {
+                    searchResults.Add(video);
+                }
+            }
+            List<List<Highlight>> list = _highlightService.SplitList(searchResults);
+            if (page == null)
+            {
+                page = 1;
+            }
+            ViewBag.pageCount = page;
+            ViewBag.listCount = list.Count;
+            var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
+            ViewBag.Search = beautifiedSearch;
+            return View(list[(int)page - 1]);
+        }
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {

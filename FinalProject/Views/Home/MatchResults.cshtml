@@ -39,7 +39,7 @@
             <td>
                 @if (item.score == null)
                 {
-                    <form asp-controller="Home" asp-action="Probability" method="post">
+                    <form asp-controller="Home" asp-action="Probability" method="get">
                         <input type="hidden" value="@Model.name" name="league" />
                         <input type="hidden" value="@item.team1" name="team1" />
                         <input type="hidden" value="@item.team2" name="team2" />

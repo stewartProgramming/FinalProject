@@ -1,16 +1,10 @@
-﻿@model List<Highlight>
+﻿@model IEnumerable<FinalProject.Models.Highlight>
 
 @{
-    ViewData["Title"] = "RecentHighlights";
+    ViewData["Title"] = "SearchHighlights";
 }
 
-<h1 style="text-align:center">Recent Football Highlights</h1>
-
-<form asp-controller="Home" asp-action="SearchHighlights" style="text-align: right;" method="get">
-    <input type="text" name="searchFor" value="Search" />
-    <input type="submit" />
-</form>
-
+<h1 style="text-align:center">Results for @ViewBag.Search</h1>
 <table class="table">
     <thead>
         <tr style="text-align:center">
@@ -23,6 +17,7 @@
         </tr>
     </thead>
     <tbody>
+        @*might need to update to var item in Model*@
         @foreach (var item in Model)
         {
             <tr style="text-align:center">
