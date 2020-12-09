@@ -30,15 +30,22 @@ namespace FinalProject.Controllers
         }
 
         [HttpPost]
+        public IActionResult LeagueStandings(string league)
+        {
+            FootballStandings standings = FootballDAL.GetStandings(league);
+            return View(standings);
+        }
+
+        [HttpPost]
         public IActionResult LeagueTeams(string league)
         {
-            List<Club> clubs = FootballDAL.GetTeams(league);
+            FootballClubs clubs = FootballDAL.GetTeams(league);
             return View(clubs);
         }
 
         public IActionResult MatchResults(string league)
         {
-            List<Match> clubs = FootballDAL.GetMatches(league);
+            FootballMatches clubs = FootballDAL.GetMatches(league);
             return View(clubs);
         }
 

@@ -1,4 +1,4 @@
-﻿<form asp-controller="Home" asp-action="MatchResults">
+﻿<form>
     <p>
         <label for="league">Select league</label>
         <select name="league" id="league">
@@ -8,9 +8,30 @@
             <option value="it.1">Italian Serie A</option>
             <option value="fr.1">French Ligue 1</option>
         </select>
-        <input type="submit" />
+        <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post"/>
+        <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post"/>
+        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post"/>
     </p>
 </form>
+
+<form>
+    <p>
+        <label for="league">Select League</label>
+        <select name="league" id="league">
+            <option value="39">English Premier League</option>
+            <option value="140">Spanish La Liga</option>
+            <option value="78">German Bundesliga</option>
+            <option value="135">Italian Serie A</option>
+            <option value="61">French Ligue 1</option>
+        </select>
+        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Current Standings" formmethod="post"/>
+    </p>
+</form>
+
+<form asp-controller="Home" asp-action="LeagueStandings">
+    <input type="submit" value="League Standings"/>
+</form>
+
 <form asp-controller="Home" asp-action="RecentHighlights">
     <input type="submit" value="Recent Highlights"/>
 </form>
