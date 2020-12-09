@@ -53,9 +53,10 @@ namespace FinalProject.Controllers
             return View(clubs);
         }
 
-        public IActionResult MatchResults(string league)
+        public IActionResult MatchResults(string league, string season)
         {
-            FootballMatches clubs = FootballDAL.GetMatches(league);
+
+            List<Match> clubs = FootballDAL.GetMatches(league, season);
             return View(clubs);
         }
 
@@ -69,7 +70,6 @@ namespace FinalProject.Controllers
 
             Match match = matches[index];
 
-            // Still needs to successfully check if score is null
             while (match.score == null)
             {
                 index = r.Next(matches.Count);
