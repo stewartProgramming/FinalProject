@@ -39,6 +39,34 @@ namespace FinalProject.Controllers
             return View(list[(int)page - 1]);
         }
 
+        public IActionResult SearchHighlights(string searchFor, int? page)
+        {
+            List<Highlight> highlights = FootballDAL.GetHighlights();
+            List<Highlight> searchResults = new List<Highlight> { };
+
+            foreach (var video in highlights)
+            {
+                if (video.competition.name.ToLower().Contains(searchFor.ToLower()))
+                {
+                    searchResults.Add(video);
+                }
+                if (video.title.ToLower().Contains(searchFor.ToLower()))
+                {
+                    searchResults.Add(video);
+                }
+            }
+            List<List<Highlight>> list = _highlightService.SplitList(searchResults);
+            if (page == null)
+            {
+                page = 1;
+            }
+            ViewBag.pageCount = page;
+            ViewBag.listCount = list.Count;
+            //capitilize search. only works for first word...
+            string searchedString = $"{searchFor.Substring(0, 1).ToUpper()}{searchFor.Substring(1)}";
+            ViewBag.Search = searchedString;
+            return View(list[(int)page - 1]);
+        }
         [HttpPost]
         public IActionResult LeagueTeams(string league)
         {
@@ -46,9 +74,9 @@ namespace FinalProject.Controllers
             return View(clubs);
         }
 
-        public IActionResult MatchResults(string league)
+        public IActionResult MatchResults(string league, string season)
         {
-            List<Match> clubs = FootballDAL.GetMatches(league);
+            List<Match> clubs = FootballDAL.GetMatches(league, season);
             return View(clubs);
         }
 
