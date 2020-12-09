@@ -7,23 +7,15 @@
             <option value="de.1">Germany</option>
             <option value="it.1">Italy</option>
             <option value="fr.1">France</option>
-            <option value="cl">Champions League</option>
         </select>
-        <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post"/>
-        <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post"/>
-        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post"/>
-    </p>
         <label for="season">Select season</label>
         <select name="season" id="season">
             <option value="2020-21">2020/2021</option>
             <option value="2019-20">2019/2020</option>
         </select>
-        <input type="submit" value="View Teams"/>
-    </p>
-</form>
-
-<form asp-controller="Home" asp-action="RecentHighlights">
-    <input type="submit" value="Recent Highlights"/>
+        <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
+        <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
+        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
 </form>
 <br />
 
@@ -36,7 +28,6 @@
             <option value="de.1">Germany</option>
             <option value="it.1">Italy</option>
             <option value="fr.1">France</option>
-            <option value="cl">Champions League</option>
         </select>
         <label for="season">Select season</label>
         <select name="season" id="season">
@@ -45,4 +36,8 @@
         </select>
         <input type="submit" value="Quiz" />
     </p>
+</form>
+
+<form asp-controller="Home" asp-action="RecentHighlights">
+    <input type="submit" value="Recent Highlights" />
 </form>
