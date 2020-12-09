@@ -62,9 +62,8 @@ namespace FinalProject.Controllers
             }
             ViewBag.pageCount = page;
             ViewBag.listCount = list.Count;
-            //capitilize search. only works for first word...
-            string searchedString = $"{searchFor.Substring(0, 1).ToUpper()}{searchFor.Substring(1)}";
-            ViewBag.Search = searchedString;
+            var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
+            ViewBag.Search = beautifiedSearch;
             return View(list[(int)page - 1]);
         }
         [HttpPost]
