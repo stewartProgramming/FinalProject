@@ -68,14 +68,22 @@ namespace FinalProject.Controllers
             return View(list[(int)page - 1]);
         }
         [HttpPost]
+        public IActionResult LeagueStandings(string league)
+        {
+            FootballStandings standings = FootballDAL.GetStandings(league);
+            return View(standings);
+        }
+
+        [HttpPost]
         public IActionResult LeagueTeams(string league)
         {
-            List<Club> clubs = FootballDAL.GetTeams(league);
+            FootballClubs clubs = FootballDAL.GetTeams(league);
             return View(clubs);
         }
 
         public IActionResult MatchResults(string league, string season)
         {
+
             List<Match> clubs = FootballDAL.GetMatches(league, season);
             return View(clubs);
         }
@@ -90,7 +98,6 @@ namespace FinalProject.Controllers
 
             Match match = matches[index];
 
-            // Still needs to successfully check if score is null
             while (match.score == null)
             {
                 index = r.Next(matches.Count);
