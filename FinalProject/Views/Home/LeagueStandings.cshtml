@@ -1,0 +1,38 @@
+﻿@model FootballStandings
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @* grab url from logo and put in img src *@
+                @Html.DisplayNameFor(model => model.response[0].league.logo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.response[0].league.name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.response) {
+        <tr>
+            <td>
+                @foreach (var item2 in item.league.standings[0])
+                {
+                    <p>Rank: @Html.DisplayFor(modelItem => item2.rank) Name: @Html.DisplayFor(modelItem => item2.team.name)
+                       Form: @Html.DisplayFor(modelItem => item2.form) Points: @Html.DisplayFor(modelItem => item2.points)</p>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
