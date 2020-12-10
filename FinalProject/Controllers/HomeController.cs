@@ -2,6 +2,7 @@
 using FinalProject.Models;
 using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -110,6 +111,95 @@ namespace FinalProject.Controllers
             }
             return View(match);
         }
+
+        public IActionResult AddFavoriteTeam()
+        {
+            CascadingModel cm = new CascadingModel();
+            var leagues = _db.Leagues.ToList();
+            foreach (var league in leagues)
+            {
+                cm.Leagues.Add(new SelectListItem
+                {
+                    Text = league.LeagueName,
+                    Value = league.Id.ToString()
+                });
+            }
+            return View(cm);
+        }        
+
+        [HttpPost]
+        public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
+        {
+            CascadingModel cm = new CascadingModel();
+            var leagues = _db.Leagues.ToList();
+            foreach (var league in leagues)
+            {
+                cm.Leagues.Add(new SelectListItem
+                {
+                    Text = league.LeagueName,
+                    Value = league.Id.ToString()
+                });
+            }
+            if (LeagueID.HasValue)
+            {
+                var teams = (from team in _db.Teams
+                             where team.LeagueId == LeagueID.Value
+                             select team).ToList();
+                foreach (var team in teams)
+                {
+                    cm.Teams.Add(new SelectListItem
+                    {
+                        Text = team.TeamName,
+                        Value = team.Id.ToString()
+                    });
+                }
+            }
+            if (TeamID.HasValue)
+            {
+                UserFavoriteTeams uf = new UserFavoriteTeams();
+                uf.UserId = FindUser();
+                uf.TeamId = (int)TeamID;
+                _db.UserFavoriteTeams.Add(uf);
+                _db.SaveChanges();
+            }
+            return View(cm);
+        }
+
+        //[HttpPost]
+        //public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
+        //{
+        //    CascadingModel cm = new CascadingModel();
+        //    var leagues = _db.Leagues.ToList();
+        //    foreach (var league in leagues)
+        //    {
+        //        cm.Leagues.Add(new SelectListItem
+        //        {
+        //            Text = league.LeagueName,
+        //            Value = league.Id.ToString()
+        //        });
+        //    }
+        //    if (LeagueID.HasValue)
+        //    {
+        //        var teams = (from team in _db.Teams
+        //                     where team.LeagueId == LeagueID.Value
+        //                     select team).ToList();
+        //        foreach (var team in teams)
+        //        {
+        //            cm.Teams.Add(new SelectListItem
+        //            {
+        //                Text = team.TeamName,
+        //                Value = team.Id.ToString()
+        //            });
+        //        }
+        //    }
+        //    UserFavoriteTeams uf = new UserFavoriteTeams();
+        //    uf.UserId = FindUser();
+        //    uf.TeamId = TeamID;
+        //    _db.UserFavoriteTeams.Add(uf);
+
+        //    return View(cm);
+        //}
+
         public IActionResult FavoriteTeamHighlights(int? page)
         {
             var favoriteTeams = (from t in _db.UserFavoriteTeams
@@ -136,7 +226,7 @@ namespace FinalProject.Controllers
                                    select t.Team).ToList();
 
             var LeagueID = from all in _db.Teams
-                           where favoriteTeamsIDs.Any(x => x.Value == all.Id)
+                           where favoriteTeamsIDs.Any(x => x == all.Id)
                            select all.LeagueId;
 
             var favoriteTeamLeagues = from l in _db.Leagues

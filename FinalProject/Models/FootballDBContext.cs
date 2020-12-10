@@ -158,22 +158,22 @@ namespace FinalProject.Models
 
             modelBuilder.Entity<UserFavoriteTeams>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.UserId, e.TeamId });
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
-                entity.Property(e => e.UserId)
-                    .HasColumnName("UserID")
-                    .HasMaxLength(450);
-
                 entity.HasOne(d => d.Team)
-                    .WithMany()
+                    .WithMany(p => p.UserFavoriteTeams)
                     .HasForeignKey(d => d.TeamId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamFavorite");
 
                 entity.HasOne(d => d.User)
-                    .WithMany()
+                    .WithMany(p => p.UserFavoriteTeams)
                     .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserFavorite");
             });
 
