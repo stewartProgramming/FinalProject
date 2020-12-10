@@ -95,15 +95,33 @@ namespace FinalProject.Controllers
             {
                 case "Premier League 2020/21":
                     league = "39";
-                    team1 = ConvertTeamEnglish(team1);
-                    team2 = ConvertTeamEnglish(team2);
+                    team1 = ConvertTeamEngland(team1);
+                    team2 = ConvertTeamEngland(team2);
                     break;
-                //case "Primera División 2020/21";
-                //    team1 = ConvertTeamEnglish(team1);
-                //    team2 = ConvertTeamEnglish(team2);
+                case "Primera División 2020/21":
+                    league = "140";
+                    team1 = ConvertTeamSpain(team1);
+                    team2 = ConvertTeamSpain(team2);
+                    break;
+                case "Bundesliga 2020/21":
+                    league = "78";
+                    team1 = ConvertTeamGermany(team1);
+                    team2 = ConvertTeamGermany(team2);
+                    break;
+                case "Serie A 2020/21":
+                    league = "135";
+                    team1 = ConvertTeamItaly(team1);
+                    team2 = ConvertTeamItaly(team2);
+                    break;
+                case "Ligue 1 2020/21":
+                    league = "61";
+                    team1 = ConvertTeamFrance(team1);
+                    team2 = ConvertTeamFrance(team2);
+                    break;
                 default:
                     break;
             }
+
 
             // Calls the standings API based on league of teams playing
             var results = FootballDAL.GetStandings(league, "2020");
@@ -228,7 +246,7 @@ namespace FinalProject.Controllers
         }
 
         // Translates the team names between the two separate APIs
-        public string ConvertTeamEnglish(string team)
+        public string ConvertTeamEngland(string team)
         {
             switch (team)
             {
@@ -237,6 +255,328 @@ namespace FinalProject.Controllers
                     break;
                 case "Chelsea FC":
                     team = "Chelsea";
+                    break;
+                case "Manchester United FC":
+                    team = "Manchester United";
+                    break;
+                case "Leicester City FC":
+                    team = "Leicester";
+                    break;
+                case "Newcastle United FC":
+                    team = "Newcastle";
+                    break;
+                case "Fulham FC":
+                    team = "Fulham";
+                    break;
+                case "Crystal Palace FC":
+                    team = "Crystal Palace";
+                    break;
+                case "Brighton & Hove Albion FC":
+                    team = "Brighton";
+                    break;
+                case "Wolverhampton Wanderers FC":
+                    team = "Wolves";
+                    break;
+                case "Everton FC":
+                    team = "Everton";
+                    break;
+                case "Liverpool FC":
+                    team = "Liverpool";
+                    break;
+                case "West Ham United FC":
+                    team = "West Ham";
+                    break;
+                case "Southampton FC":
+                    team = "Southampton";
+                    break;
+                case "Burnley FC":
+                    team = "Burnley";
+                    break;
+                case "Arsenal FC":
+                    team = "Arsenal";
+                    break;
+                case "Manchester City FC":
+                    team = "Manchester City";
+                    break;
+                case "West Bromwich Albion FC":
+                    team = "West Brom";
+                    break;
+                case "Aston Villa FC":
+                    team = "Aston Villa";
+                    break;
+                case "Leeds United FC":
+                    team = "Leeds";
+                    break;
+                case "Sheffield United FC":
+                    team = "Sheffield";
+                    break;
+                default:
+                    break;
+            }
+            return team;
+        }
+
+        public string ConvertTeamSpain(string team)
+        {
+            switch (team)
+            {
+                case "Cádiz CF":
+                    team = "Cadiz";
+                    break;
+                case "Elche CF":
+                    team = "Elche";
+                    break;
+                case "Granada CF":
+                    team = "Granada CF";
+                    break;
+                case "CA Osasuna":
+                    team = "Osasuna";
+                    break;
+                case "Real Valladolid CF":
+                    team = "Valladolid";
+                    break;
+                case "Real Betis":
+                    team = "Real Betis";
+                    break;
+                case "Levante UD":
+                    team = "Levante";
+                    break;
+                case "RC Celta Vigo":
+                    team = "Celta Vigo";
+                    break;
+                case "Villarreal CF":
+                    team = "Villarreal";
+                    break;
+                case "Real Sociedad":
+                    team = "Real Sociedad";
+                    break;
+                case "FC Barcelona":
+                    team = "Barcelona";
+                    break;
+                case "Deportivo Alavés":
+                    team = "Alaves";
+                    break;
+                case "SD Eibar":
+                    team = "Eibar";
+                    break;
+                case "SD Huesca":
+                    team = "Huesca";
+                    break;
+                case "Sevilla FC":
+                    team = "Sevilla";
+                    break;
+                case "Real Madrid":
+                    team = "Real Madrid";
+                    break;
+                case "Getafe CF":
+                    team = "Getafe";
+                    break;
+                case "Valencia CF":
+                    team = "Valencia";
+                    break;
+                case "Atlético Madrid":
+                    team = "Atletico Madrid";
+                    break;
+                case "Athletic Club Bilbao":
+                    team = "Athletic Club";
+                    break;
+                default:
+                    break;
+            }
+            return team;
+        }public string ConvertTeamGermany(string team)
+        {
+            switch (team)
+            {
+                case "1. FC Koln":
+                    team = "FC Koln";
+                    break;
+                case "1. FC Union Berlin":
+                    team = "Union Berlin";
+                    break;
+                case "Arminia Bielefeld":
+                    team = "Arminia Bielefeld";
+                    break;
+                case "VfB Stuttgart":
+                    team = "Vfb Stuttgart";
+                    break;
+                case "Bayern München":
+                    team = "Bayern Munich";
+                    break;
+                case "TSG 1899 Hoffenheim":
+                    team = "1899 Hoffenheim";
+                    break;
+                case "Hertha BSC":
+                    team = "Hertha Berlin";
+                    break;
+                case "Werder Bremen":
+                    team = "Werder Bremen";
+                    break;
+                case "SC Freiburg":
+                    team = "SC Freiburg";
+                    break;
+                case "Eintracht Frankfurt":
+                    team = "Eintracht Frankfurt";
+                    break;
+                case "VfL Wolfsburg":
+                    team = "VfL Wolfsburg";
+                    break;
+                case "FC Schalke 04":
+                    team = "FC Schalke 04";
+                    break;
+                case "FC Augsburg":
+                    team = "FC Augsburg";
+                    break;
+                case "Bor. Mönchengladbach":
+                    team = "Borussia Monchengladbach";
+                    break;
+                case "Bayer 04 Leverkusen":
+                    team = "Bayer Leverkusen";
+                    break;
+                case "1. FSV Mainz 05":
+                    team = "FSV Mainz 05";
+                    break;
+                case "Borussia Dortmund":
+                    team = "Borussia Dortmund";
+                    break;
+                case "RB Leipzig":
+                    team = "RB Leipzig";
+                    break;
+                default:
+                    break;
+            }
+            return team;
+        }public string ConvertTeamItaly(string team)
+        {
+            switch (team)
+            {
+                case "Juventus":
+                    team = "Juventus";
+                    break;
+                case "SS Lazio":
+                    team = "Lazio";
+                    break;
+                case "SSC Napoli":
+                    team = "Napoli";
+                    break;
+                case "Torino FC":
+                    team = "Torino";
+                    break;
+                case "AS Roma":
+                    team = "AS Roma";
+                    break;
+                case "Cagliari Calcio":
+                    team = "Cagliari";
+                    break;
+                case "US Sassuolo Calcio":
+                    team = "Sassuolo";
+                    break;
+                case "FC Internazionale Milano":
+                    team = "Inter";
+                    break;
+                case "Parma":
+                    team = "Parma";
+                    break;
+                case "Udinese Calcio":
+                    team = "Udinese";
+                    break;
+                case "Bologna FC":
+                    team = "Bologna";
+                    break;
+                case "Atalanta Bergamo":
+                    team = "Atalanta";
+                    break;
+                case "AC Milan":
+                    team = "AC Milan";
+                    break;
+                case "UC Sampdoria":
+                    team = "Sampdoria";
+                    break;
+                case "ACF Fiorentina":
+                    team = "Fiorentina";
+                    break;
+                case "Genoa CFC":
+                    team = "Genoa";
+                    break;
+                case "Spezia":
+                    team = "Spezia";
+                    break;
+                case "Hellas Verona":
+                    team = "Verona";
+                    break;
+                case "FC Crotone":
+                    team = "Crotone";
+                    break;
+                case "Benevento":
+                    team = "Benevento";
+                    break;
+                default:
+                    break;
+            }
+            return team;
+        }public string ConvertTeamFrance(string team)
+        {
+            switch (team)
+            {
+                case "Olympique de Marseille":
+                    team = "Marseille";
+                    break;
+                case "FC Nantes":
+                    team = "Nantes";
+                    break;
+                case "AS Monaco":
+                    team = "Monaco";
+                    break;
+                case "Montpellier HSC":
+                    team = "Montpellier";
+                    break;
+                case "Dijon FCO":
+                    team = "Dijon";
+                    break;
+                case "Lille OSC":
+                    team = "Lille";
+                    break;
+                case "Stade Rennais FC":
+                    team = "Rennes";
+                    break;
+                case "As Saint-Étienne":
+                    team = "Saint Etienne";
+                    break;
+                case "OGC Nice":
+                    team = "Nice";
+                    break;
+                case "Stade de Reims":
+                    team = "Reims";
+                    break;
+                case "Angers SCO":
+                    team = "Angers";
+                    break;
+                case "Nîmes Olympique":
+                    team = "Nimes";
+                    break;
+                case "Olympique Lyonnais":
+                    team = "Lyon";
+                    break;
+                case "Paris Saint-Germain":
+                    team = "Paris Saint Germain";
+                    break;
+                case "Girondins de Bordeaux":
+                    team = "Bordeaux";
+                    break;
+                case "RC Strasbourg":
+                    team = "Strasbourg";
+                    break;
+                case "RC Lens":
+                    team = "Lens";
+                    break;
+                case "FC Lorient":
+                    team = "Lorient";
+                    break;
+                case "Stade Brestois 29":
+                    team = "Stade Brestois 29";
+                    break;
+                case "FC Metz":
+                    team = "Metz";
                     break;
                 default:
                     break;
