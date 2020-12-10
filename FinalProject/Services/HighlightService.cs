@@ -14,6 +14,7 @@ namespace FinalProject.Services
 
             return list;
         }
+
         public List<List<Highlight>> GetFavoriteHighlights(List<Teams> teams)
         {
             List<Highlight> highlights = new List<Highlight>();
@@ -28,7 +29,8 @@ namespace FinalProject.Services
         }
 
         //break Highlight list into lists of 10
-        private List<List<Highlight>> SplitList(List<Highlight> highlights)
+        public List<List<Highlight>> SplitList(List<Highlight> highlights)
+
         {
             var list = new List<List<Highlight>>();
 

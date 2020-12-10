@@ -9,7 +9,6 @@ namespace FinalProject.Models
         {
             UserFavoriteTeams = new HashSet<UserFavoriteTeams>();
         }
-
         public int Id { get; set; }
         public string TeamName { get; set; }
         public int? LeagueId { get; set; }

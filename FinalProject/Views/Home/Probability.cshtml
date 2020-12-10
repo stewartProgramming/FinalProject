@@ -1,0 +1,67 @@
+﻿@model MatchProbabilityViewModel
+
+@{
+    ViewData["Title"] = "Probability";
+}
+
+<h1>Probability</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@{double difference = 0;}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Team1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Team2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Team1Score)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Team2Score)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Team1)
+                <br />
+                @if (Model.Team1Score > Model.Team2Score)
+                {
+                    difference = Model.Team1Score - Model.Team2Score;
+                    @if (difference > 2)
+                    {
+                        <p>Projected Winner</p>
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Team2)
+                <br />
+                @if (Model.Team2Score > Model.Team1Score)
+                {
+                    difference = Model.Team2Score - Model.Team1Score;
+                    @if (difference > 2)
+                    {
+                        <p>Projected Winner</p>
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Team1Score)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Team2Score)
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h1>@if (difference <= 2) {
+    <p>Projected Tie</p>
+}</h1>

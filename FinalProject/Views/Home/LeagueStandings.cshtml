@@ -1,0 +1,43 @@
+﻿@model FootballStandings
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Rank
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Form
+            </th>
+            <th>
+                Points
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.response) {
+        <tr>
+            <td>
+                @foreach (var item2 in item.league.standings[0])
+                {
+                    <p>Rank: @Html.DisplayFor(modelItem => item2.rank) Name: @Html.DisplayFor(modelItem => item2.team.name)
+                       Form: @Html.DisplayFor(modelItem => item2.form) Points: @Html.DisplayFor(modelItem => item2.points)</p>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

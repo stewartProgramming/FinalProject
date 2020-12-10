@@ -1,0 +1,37 @@
+﻿@model Match
+
+@{
+    ViewData["Title"] = "Quiz";
+}
+
+<h1>Test Your Football Knowledge</h1>
+
+<hr />
+
+<h2>Match-Up</h2>
+
+<br />
+
+<p>Date of Match: <b>@Model.date</b></p>
+<p><b>@Model.team1</b> vs. <b>@Model.team2</b></p>
+
+<br />
+
+@if (!string.IsNullOrEmpty(ViewBag.Result))
+{
+    if (ViewBag.Result == "Congratulations! You really know your football trivia.")
+    {
+        <h2 style="color: limegreen">@ViewBag.Result</h2>
+    }
+    else
+    {
+        <h2 style="color:red">@ViewBag.Result</h2>
+    }
+}
+else
+{
+    <p>Please <a href="../Home/Index">return to the main page</a> to select quiz parameters.</p>
+}
+
+<br />
+<p>Return to the <a href="../Home/Index">main page</a> if you would like to try again.</p>

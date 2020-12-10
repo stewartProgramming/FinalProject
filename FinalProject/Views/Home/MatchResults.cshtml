@@ -1,10 +1,10 @@
-﻿@model IEnumerable<FinalProject.Models.Match>
+﻿@model FootballMatches
 
 @{
     ViewData["Title"] = "MatchResults";
 }
 
-<h1>Match Results</h1>
+<h1>@Model.name</h1>
 
 <table class="table">
     <thead>
@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.matches) {
         <tr>
             <td style="text-align:center">
                 @Html.DisplayFor(modelItem => item.round)
@@ -29,14 +29,23 @@
                 @Html.DisplayFor(modelItem => item.date)
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team1)
+                @Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]
                 <br />
-                [@Html.DisplayFor(modelItem => item.score.ft[0])]
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team2)
+                @Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]
                 <br />
-                [@Html.DisplayFor(modelItem => item.score.ft[1])]
+            </td>
+            <td>
+                @if (item.score == null)
+                {
+                    <form asp-controller="Home" asp-action="Probability" method="get">
+                        <input type="hidden" value="@Model.name" name="league" />
+                        <input type="hidden" value="@item.team1" name="team1" />
+                        <input type="hidden" value="@item.team2" name="team2" />
+                        <input type="submit" value="Probability" />
+                    </form>
+                }
             </td>
         </tr>
 }
