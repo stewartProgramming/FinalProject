@@ -74,8 +74,8 @@ namespace FinalProject.Models
             string data = CallTeamAPI(league, season);
             FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
             return r;
-        }
-
+        }      
+      
         public static string CallMatchAPI(string league, string season)
         {
             string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.json";
@@ -102,7 +102,6 @@ namespace FinalProject.Models
             List<Highlight> r = JsonConvert.DeserializeObject<List<Highlight>>(data);
             return r;
         }
-
 
         public static FootballMatches GetMatches(string league, string season)
         {

@@ -1,11 +1,14 @@
-﻿using FinalProject.Models;
+﻿using FinalProject.Data;
+using FinalProject.Models;
 using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FinalProject.Controllers
@@ -14,11 +17,13 @@ namespace FinalProject.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HighlightService _highlightService;
+        private readonly FootballDBContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, FootballDBContext db)
         {
             _logger = logger;
             _highlightService = new HighlightService();
+            _db = db;
         }
 
         public IActionResult Index()
@@ -82,7 +87,6 @@ namespace FinalProject.Controllers
 
         public IActionResult MatchResults(string league, string season)
         {
-
             FootballMatches clubs = FootballDAL.GetMatches(league, season);
             return View(clubs);
         }
@@ -296,6 +300,140 @@ namespace FinalProject.Controllers
                 ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
             }
             return View(match);
+        }
+
+        public IActionResult AddFavoriteTeam()
+        {
+            CascadingModel cm = new CascadingModel();
+            var leagues = _db.Leagues.ToList();
+            foreach (var league in leagues)
+            {
+                cm.Leagues.Add(new SelectListItem
+                {
+                    Text = league.LeagueName,
+                    Value = league.Id.ToString()
+                });
+            }
+            return View(cm);
+        }        
+
+        [HttpPost]
+        public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
+        {
+            CascadingModel cm = new CascadingModel();
+            var leagues = _db.Leagues.ToList();
+            foreach (var league in leagues)
+            {
+                cm.Leagues.Add(new SelectListItem
+                {
+                    Text = league.LeagueName,
+                    Value = league.Id.ToString()
+                });
+            }
+            if (LeagueID.HasValue)
+            {
+                var teams = (from team in _db.Teams
+                             where team.LeagueId == LeagueID.Value
+                             select team).ToList();
+                foreach (var team in teams)
+                {
+                    cm.Teams.Add(new SelectListItem
+                    {
+                        Text = team.TeamName,
+                        Value = team.Id.ToString()
+                    });
+                }
+            }
+            if (TeamID.HasValue)
+            {
+                UserFavoriteTeams uf = new UserFavoriteTeams();
+                uf.UserId = FindUser();
+                uf.TeamId = (int)TeamID;
+                _db.UserFavoriteTeams.Add(uf);
+                try
+                {
+                _db.SaveChanges();
+                return RedirectToAction("FavoriteTeams");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("FavoriteTeams");
+                }
+            }
+            return View(cm);
+        }
+
+        public IActionResult FavoriteTeamHighlights(int? page)
+        {
+            var favoriteTeams = (from t in _db.UserFavoriteTeams
+                                 where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
+                                 select t.Team).ToList();
+            List<List<Highlight>> highlights = _highlightService.GetFavoriteHighlights(favoriteTeams);
+            if (page == null)
+            {
+                page = 1;
+            }
+            ViewBag.pageCount = page;
+            ViewBag.listCount = highlights.Count;
+            return View(highlights[(int)page - 1]);
+        }
+
+        public IActionResult FavoriteTeams()
+        {
+            var favoriteTeamsIDs = from t in _db.UserFavoriteTeams
+                                   where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
+                                   select t.TeamId;
+
+            var favoriteTeams = (from t in _db.UserFavoriteTeams
+                                   where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
+                                   select t.Team).ToList();
+
+            var LeagueID = from all in _db.Teams
+                           where favoriteTeamsIDs.Any(x => x == all.Id)
+                           select all.LeagueId;
+
+            var favoriteTeamLeagues = from l in _db.Leagues
+                                     where LeagueID.Any(x => x.Value == l.Id)
+                                     select l.LeagueName;
+            List<Match> matches = new List<Match>();
+
+            foreach (var league in favoriteTeamLeagues)
+            {
+                string leagueOut = "";
+                switch (league)
+                {
+                    case "England":
+                        leagueOut = "en.1";
+                        break;
+                    case "Spain":
+                        leagueOut = "es.1";
+                        break;
+                    case "Germany":
+                        leagueOut = "de.1";
+                        break;
+                    case "Italy":
+                        leagueOut = "it.1";
+                        break;
+                    case "France":
+                        leagueOut = "fr.1";
+                        break;
+                    default:
+                        break;
+                }
+                foreach (var team in favoriteTeams)
+                {
+                    matches.AddRange(FootballDAL.GetMatches(leagueOut, "2020-21").Where(x => x.team1 == team.TeamName || x.team2 == team.TeamName));
+                }
+            }            
+            return View(matches);
+        }
+
+        public string FindUser()
+        {
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userId = claim.Value;
+            return userId;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
