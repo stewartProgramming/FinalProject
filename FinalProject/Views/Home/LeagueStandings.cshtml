@@ -4,38 +4,40 @@
     ViewData["Title"] = "View";
 }
 
-<h1>View</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1 style="text-align:center"><img src="@Model.response[0].league.logo" height="50"> @Model.response[0].league.name @Model.response[0].league.season Standings</h1>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Rank
+            <th style="text-align:center">
+                #
             </th>
-            <th>
+            <th style="text-align:center">
                 Name
             </th>
-            <th>
+            <th style="text-align:center">
                 Form
             </th>
-            <th>
-                Points
+            <th style="text-align:center">
+                Points / Goal Difference
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.response) {
+@foreach (var item in Model.response[0].league.standings[0]) {
         <tr>
-            <td>
-                @foreach (var item2 in item.league.standings[0])
-                {
-                    <p>Rank: @Html.DisplayFor(modelItem => item2.rank) Name: @Html.DisplayFor(modelItem => item2.team.name)
-                       Form: @Html.DisplayFor(modelItem => item2.form) Points: @Html.DisplayFor(modelItem => item2.points)</p>
-                }
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.rank)
+            </td>
+            <td style="text-align:center">
+                <img src="@Html.DisplayFor(modelItem => item.team.logo)" width="25" height="25" /> @Html.DisplayFor(modelItem => item.team.name)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.form)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.points) / @Html.DisplayFor(modelItem => item.goalsDiff)
             </td>
         </tr>
 }
