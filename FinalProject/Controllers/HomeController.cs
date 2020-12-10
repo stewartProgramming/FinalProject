@@ -131,7 +131,15 @@ namespace FinalProject.Controllers
             // Filtering through standings and grabbing selected teams (from match results view)
             foreach(var item in standings)
             {
-                if (item.team.name == team1 || item.team.name == team2)
+                if (item.team.name == team1)
+                {
+                    standingslist.Add(item);
+                }
+            }
+
+            foreach (var item in standings)
+            {
+                if (item.team.name == team2)
                 {
                     standingslist.Add(item);
                 }
@@ -326,17 +334,11 @@ namespace FinalProject.Controllers
                 case "Elche CF":
                     team = "Elche";
                     break;
-                case "Granada CF":
-                    team = "Granada CF";
-                    break;
                 case "CA Osasuna":
                     team = "Osasuna";
                     break;
                 case "Real Valladolid CF":
                     team = "Valladolid";
-                    break;
-                case "Real Betis":
-                    team = "Real Betis";
                     break;
                 case "Levante UD":
                     team = "Levante";
@@ -346,9 +348,6 @@ namespace FinalProject.Controllers
                     break;
                 case "Villarreal CF":
                     team = "Villarreal";
-                    break;
-                case "Real Sociedad":
-                    team = "Real Sociedad";
                     break;
                 case "FC Barcelona":
                     team = "Barcelona";
@@ -364,9 +363,6 @@ namespace FinalProject.Controllers
                     break;
                 case "Sevilla FC":
                     team = "Sevilla";
-                    break;
-                case "Real Madrid":
-                    team = "Real Madrid";
                     break;
                 case "Getafe CF":
                     team = "Getafe";
@@ -388,17 +384,11 @@ namespace FinalProject.Controllers
         {
             switch (team)
             {
-                case "1. FC Koln":
+                case "1. FC Köln":
                     team = "FC Koln";
                     break;
                 case "1. FC Union Berlin":
                     team = "Union Berlin";
-                    break;
-                case "Arminia Bielefeld":
-                    team = "Arminia Bielefeld";
-                    break;
-                case "VfB Stuttgart":
-                    team = "Vfb Stuttgart";
                     break;
                 case "Bayern München":
                     team = "Bayern Munich";
@@ -409,24 +399,6 @@ namespace FinalProject.Controllers
                 case "Hertha BSC":
                     team = "Hertha Berlin";
                     break;
-                case "Werder Bremen":
-                    team = "Werder Bremen";
-                    break;
-                case "SC Freiburg":
-                    team = "SC Freiburg";
-                    break;
-                case "Eintracht Frankfurt":
-                    team = "Eintracht Frankfurt";
-                    break;
-                case "VfL Wolfsburg":
-                    team = "VfL Wolfsburg";
-                    break;
-                case "FC Schalke 04":
-                    team = "FC Schalke 04";
-                    break;
-                case "FC Augsburg":
-                    team = "FC Augsburg";
-                    break;
                 case "Bor. Mönchengladbach":
                     team = "Borussia Monchengladbach";
                     break;
@@ -435,12 +407,6 @@ namespace FinalProject.Controllers
                     break;
                 case "1. FSV Mainz 05":
                     team = "FSV Mainz 05";
-                    break;
-                case "Borussia Dortmund":
-                    team = "Borussia Dortmund";
-                    break;
-                case "RB Leipzig":
-                    team = "RB Leipzig";
                     break;
                 default:
                     break;
@@ -462,9 +428,6 @@ namespace FinalProject.Controllers
                 case "Torino FC":
                     team = "Torino";
                     break;
-                case "AS Roma":
-                    team = "AS Roma";
-                    break;
                 case "Cagliari Calcio":
                     team = "Cagliari";
                     break;
@@ -473,9 +436,6 @@ namespace FinalProject.Controllers
                     break;
                 case "FC Internazionale Milano":
                     team = "Inter";
-                    break;
-                case "Parma":
-                    team = "Parma";
                     break;
                 case "Udinese Calcio":
                     team = "Udinese";
@@ -486,9 +446,6 @@ namespace FinalProject.Controllers
                 case "Atalanta Bergamo":
                     team = "Atalanta";
                     break;
-                case "AC Milan":
-                    team = "AC Milan";
-                    break;
                 case "UC Sampdoria":
                     team = "Sampdoria";
                     break;
@@ -498,17 +455,11 @@ namespace FinalProject.Controllers
                 case "Genoa CFC":
                     team = "Genoa";
                     break;
-                case "Spezia":
-                    team = "Spezia";
-                    break;
                 case "Hellas Verona":
                     team = "Verona";
                     break;
                 case "FC Crotone":
                     team = "Crotone";
-                    break;
-                case "Benevento":
-                    team = "Benevento";
                     break;
                 default:
                     break;
@@ -571,9 +522,6 @@ namespace FinalProject.Controllers
                     break;
                 case "FC Lorient":
                     team = "Lorient";
-                    break;
-                case "Stade Brestois 29":
-                    team = "Stade Brestois 29";
                     break;
                 case "FC Metz":
                     team = "Metz";
