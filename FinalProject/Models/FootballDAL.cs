@@ -112,12 +112,12 @@ namespace FinalProject.Models
         }
 
 
-        //public static List<Match> GetMatches(string league, string season)
-        //{
-        //    string data = CallMatchAPI(league, season);
-        //    FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
-        //    List<Match> matches = r.matches.ToList();
-        //    return matches;
-        //}
+        public static List<Match> GetMatchesList(string league, string season)
+        {
+            string data = CallMatchAPI(league, season);
+            FootballMatches r = JsonConvert.DeserializeObject<FootballMatches>(data);
+            List<Match> matches = r.matches.ToList();
+            return matches;
+        }
     }
 }

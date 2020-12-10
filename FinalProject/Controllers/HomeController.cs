@@ -422,7 +422,7 @@ namespace FinalProject.Controllers
                 }
                 foreach (var team in favoriteTeams)
                 {
-                    matches.AddRange(FootballDAL.GetMatches(leagueOut, "2020-21").Where(x => x.team1 == team.TeamName || x.team2 == team.TeamName));
+                    matches.AddRange(FootballDAL.GetMatchesList(leagueOut, "2020-21").Where(x => x.team1 == team.TeamName || x.team2 == team.TeamName));
                 }
             }            
             return View(matches);
