@@ -160,45 +160,18 @@ namespace FinalProject.Controllers
                 uf.UserId = FindUser();
                 uf.TeamId = (int)TeamID;
                 _db.UserFavoriteTeams.Add(uf);
+                try
+                {
                 _db.SaveChanges();
+                return RedirectToAction("FavoriteTeams");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("FavoriteTeams");
+                }
             }
             return View(cm);
         }
-
-        //[HttpPost]
-        //public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
-        //{
-        //    CascadingModel cm = new CascadingModel();
-        //    var leagues = _db.Leagues.ToList();
-        //    foreach (var league in leagues)
-        //    {
-        //        cm.Leagues.Add(new SelectListItem
-        //        {
-        //            Text = league.LeagueName,
-        //            Value = league.Id.ToString()
-        //        });
-        //    }
-        //    if (LeagueID.HasValue)
-        //    {
-        //        var teams = (from team in _db.Teams
-        //                     where team.LeagueId == LeagueID.Value
-        //                     select team).ToList();
-        //        foreach (var team in teams)
-        //        {
-        //            cm.Teams.Add(new SelectListItem
-        //            {
-        //                Text = team.TeamName,
-        //                Value = team.Id.ToString()
-        //            });
-        //        }
-        //    }
-        //    UserFavoriteTeams uf = new UserFavoriteTeams();
-        //    uf.UserId = FindUser();
-        //    uf.TeamId = TeamID;
-        //    _db.UserFavoriteTeams.Add(uf);
-
-        //    return View(cm);
-        //}
 
         public IActionResult FavoriteTeamHighlights(int? page)
         {
