@@ -1,6 +1,7 @@
 ﻿using FinalProject.Data;
 using FinalProject.Models;
 using FinalProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -665,7 +666,7 @@ namespace FinalProject.Controllers
             ViewBag.listCount = highlights.Count;
             return View(highlights[(int)page - 1]);
         }
-
+        [Authorize]
         public IActionResult FavoriteTeams()
         {
             var favoriteTeamsIDs = from t in _db.UserFavoriteTeams
