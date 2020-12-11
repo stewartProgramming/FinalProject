@@ -7,80 +7,86 @@
 <h1 style="text-align:center">Recent Football Highlights</h1>
 
 <form asp-controller="Home" asp-action="SearchHighlights" style="text-align: right;" method="get">
-    <input type="text" name="searchFor" value="Search" />
+    <input type="text" name="searchFor" placeholder="Search" />
     <input type="submit" />
 </form>
 
-<table class="table">
-    <thead>
-        <tr style="text-align:center">
-            <th>
-                Match
-            </th>
-            <th style="padding: 2px 200px 2px 200px;">
-                Highlight Video
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr style="text-align:center">
-                <td>
-                    @Html.DisplayFor(modelItem => item.competition.name)
-                    <br />
-                    @Html.DisplayFor(modelItem => item.title)
-                    <br />
-                    @Html.DisplayFor(modelItem => item.date)
-                </td>
-                <td>
-                    @foreach (var v in item.videos)
+@{ if (Model != null && Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr style="text-align:center">
+                    <th>
+                        Match
+                    </th>
+                    <th style="padding: 2px 200px 2px 200px;">
+                        Highlight Video
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="text-align:center">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.competition.name)
+                            <br />
+                            @Html.DisplayFor(modelItem => item.title)
+                            <br />
+                            @Html.DisplayFor(modelItem => item.date)
+                        </td>
+                        <td>
+                            @foreach (var v in item.videos)
+                            {
+                                @Html.Raw(v.embed)
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @*navigation*@
+            int pageNum = ViewBag.pageCount;
+            int numOfpages = ViewBag.listCount;
+
+            int p = pageNum >= 2 ? pageNum - 1 : pageNum;
+            int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
+            int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
+
+            int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
+            int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
+            int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
+
+        <form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
+            @{
+                if (pageNum >= 2)
+                {
+                    <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
+
+                    @if (pageNum != pr)
                     {
-                        @Html.Raw(v.embed)
+                        <input class="btn-outline-info" name="page" type="submit" value="@pr" />
                     }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@*navigation*@
-@{
-    int pageNum = ViewBag.pageCount;
-    int numOfpages = ViewBag.listCount;
-
-    int p = pageNum >= 2 ? pageNum - 1 : pageNum;
-    int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
-    int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
-
-    int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
-    int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
-    int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
+                    <input class="btn-outline-info" name="page" type="submit" value="@p" />
+                }
+            }
+            <input class="btn-info" name="page" type="submit" value="@pageNum" />
+            @{
+                if (pageNum < numOfpages)
+                {
+                    <input class="btn-outline-info" name="page" type="submit" value="@n" />
+                    @if (pageNum != ne)
+                    {
+                        <input class="btn-outline-info" name="page" type="submit" value="@ne" />
+                    }
+                    <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
+                }
+            }
+        </form>
+    }
+    else
+    {
+        <h3>No results were found. Please check again later.</h3>
+    }
 }
-
-<form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
-    @{
-        if (pageNum >= 2)
-        {
-            <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
-
-            @if (pageNum != pr)
-            {
-                <input class="btn-outline-info" name="page" type="submit" value="@pr" />
-            }
-            <input class="btn-outline-info" name="page" type="submit" value="@p" />
-        }
-    }
-    <input class="btn-info" name="page" type="submit" value="@pageNum" />
-    @{
-        if (pageNum < numOfpages)
-        {
-            <input class="btn-outline-info" name="page" type="submit" value="@n" />
-            @if (pageNum != ne)
-            {
-                <input class="btn-outline-info" name="page" type="submit" value="@ne" />
-            }
-            <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
-        }
-    }
-</form>
