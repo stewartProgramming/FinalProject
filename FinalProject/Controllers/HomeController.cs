@@ -16,7 +16,7 @@ namespace FinalProject.Controllers
 {
     public class HomeController : Controller
     {
-        //dependency injection for cache. Methods can't be static
+        //dependency injection for cache
         private readonly HighlightService _highlightService;
         private readonly FootballDBContext _db;
         private readonly FootballDAL _footballDAL;
