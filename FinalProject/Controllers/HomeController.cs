@@ -36,13 +36,22 @@ namespace FinalProject.Controllers
         public IActionResult RecentHighlights(int? page)
         {
             List<List<Highlight>> list = _highlightService.GetHighlights();
-            if (page == null)
+
+            if (list.Any())
             {
-                page = 1;
+                if (page == null)
+                {
+                    page = 1;
+                }
+                ViewBag.pageCount = page;
+                ViewBag.listCount = list.Count;
+                return View(list[(int)page - 1]);
             }
-            ViewBag.pageCount = page;
-            ViewBag.listCount = list.Count;
-            return View(list[(int)page - 1]);
+            else
+            {
+                List<Highlight> emptyList = new List<Highlight> { };
+                return View(emptyList);
+            }
         }
 
         public IActionResult SearchHighlights(string searchFor, int? page)

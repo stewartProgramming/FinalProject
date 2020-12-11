@@ -116,6 +116,8 @@ namespace FinalProject.Models
             if (string.IsNullOrWhiteSpace(data)) return new List<Highlight>();
 
             List<Highlight> r = JsonConvert.DeserializeObject<List<Highlight>>(data);
+            _cachedHighlights = r;
+            _timeStamp = DateTime.Now;
             return r;
         }
 
