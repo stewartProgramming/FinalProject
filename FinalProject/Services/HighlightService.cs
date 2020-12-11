@@ -7,10 +7,15 @@ namespace FinalProject.Services
 {
     public class HighlightService
     {
-        
+        private readonly FootballDAL _footballDAL;
+        public HighlightService(FootballDAL footballDAL)
+        {
+            _footballDAL = footballDAL;
+        }
+
         public List<List<Highlight>> GetHighlights()
         {
-            List<Highlight> highlights = FootballDAL.GetHighlights();
+            List<Highlight> highlights = _footballDAL.GetHighlights();
             List<List<Highlight>> list = SplitList(highlights).ToList();
             return list;
         }
@@ -20,7 +25,7 @@ namespace FinalProject.Services
             List<Highlight> highlights = new List<Highlight>();
             foreach (var team in teams)
             {
-                highlights.AddRange(FootballDAL.GetHighlights().Where(x => x.side1.name == team.TeamName || x.side2.name == team.TeamName));
+                highlights.AddRange(_footballDAL.GetHighlights().Where(x => x.side1.name == team.TeamName || x.side2.name == team.TeamName));
             }
 
             List<List<Highlight>> list = SplitList(highlights).ToList();
@@ -42,7 +47,7 @@ namespace FinalProject.Services
         }
         public List<List<Highlight>> SearchHighlights(string searchFor)
         {
-            List<Highlight> highlights = FootballDAL.GetHighlights();
+            List<Highlight> highlights = _footballDAL.GetHighlights();
 
             if (highlights.Any())
             {

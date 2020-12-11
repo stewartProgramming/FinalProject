@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,14 @@ namespace FinalProject.Models
     public class FootballDAL
     {
         private static DateTime _timeStamp = DateTime.Now;
-        private static List<Highlight> _cachedHighlights = new List<Highlight>();
+        //private static List<Highlight> _cachedHighlights = new List<Highlight>();
+        private IMemoryCache _cache;
+
+        public FootballDAL(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
+
         public static string CallTeamAPI(string league, string season)
         {
             string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.clubs.json";
@@ -34,7 +42,7 @@ namespace FinalProject.Models
             return output;
         }
 
-        public static FootballStandings GetStandings(string league, string season)
+        public FootballStandings GetStandings(string league, string season)
         {
             if (league == "en.1")
             {
@@ -66,8 +74,19 @@ namespace FinalProject.Models
                 season = "2020";
             }
 
+            //creat unique key for each option; "{league} ¬_¬ {season}
+            var cacheKey = string.Join("¬_¬", league, season);
+
+            //check cache for key. If there is a match, return it
+            if (_cache.TryGetValue(cacheKey, out FootballStandings cacheStandings)) { return cacheStandings; }
+            
+            //if cache doesn't have a match, go to api
             string data = CallStandingsAPI(league, season);
             FootballStandings s = JsonConvert.DeserializeObject<FootballStandings>(data);
+
+            //put key and standings in cache for 15 min
+            _cache.Set(cacheKey, s, new DateTimeOffset(DateTime.Now.AddMinutes(15)));
+
             return s;
         }
 
@@ -105,19 +124,23 @@ namespace FinalProject.Models
             }
         }
 
-        public static List<Highlight> GetHighlights()
+        public List<Highlight> GetHighlights()
         {
-            if (_cachedHighlights.Any() && DateTime.Now - _timeStamp < TimeSpan.FromMinutes(15))
-            {
-                return _cachedHighlights;
-            }
+            //create key, doesn't need to be unique
+            var cacheKey = "highlights";
+
+            //if there is anything in cache for highlights, return it
+            if (_cache.TryGetValue(cacheKey, out List<Highlight> cacheHighlights)) { return cacheHighlights; }
+
             string data = CallHighlightAPI();
 
+            //if api fails, you get an empty string, this changes that to an empty list to controller
             if (string.IsNullOrWhiteSpace(data)) return new List<Highlight>();
 
             List<Highlight> r = JsonConvert.DeserializeObject<List<Highlight>>(data);
-            _cachedHighlights = r;
-            _timeStamp = DateTime.Now;
+
+            //put key and results in cache for 15 min
+            _cache.Set(cacheKey, r, new DateTimeOffset(DateTime.Now.AddMinutes(15)));
             return r;
         }
 

@@ -16,15 +16,16 @@ namespace FinalProject.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //dependency injection for cache. Methods can't be static
         private readonly HighlightService _highlightService;
         private readonly FootballDBContext _db;
+        private readonly FootballDAL _footballDAL;
 
-        public HomeController(ILogger<HomeController> logger, FootballDBContext db)
+        public HomeController(HighlightService highlightService, FootballDBContext db, FootballDAL footballDAL)
         {
-            _logger = logger;
-            _highlightService = new HighlightService();
+            _highlightService = highlightService;
             _db = db;
+            _footballDAL = footballDAL;
         }
 
         public IActionResult Index()
@@ -37,6 +38,7 @@ namespace FinalProject.Controllers
         {
             List<List<Highlight>> list = _highlightService.GetHighlights();
 
+            //if else returns empty list to view to get error message
             if (list.Any())
             {
                 if (page == null)
@@ -81,7 +83,7 @@ namespace FinalProject.Controllers
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {
-            FootballStandings standings = FootballDAL.GetStandings(league, season);
+            FootballStandings standings = _footballDAL.GetStandings(league, season);
             return View(standings);
         }
 
@@ -135,7 +137,7 @@ namespace FinalProject.Controllers
 
 
             // Calls the standings API based on league of teams playing
-            var results = FootballDAL.GetStandings(league, "2020");
+            var results = _footballDAL.GetStandings(league, "2020");
             var standings = results.response[0].league.standings[0];
             List<Standing> standingslist = new List<Standing>();
 
