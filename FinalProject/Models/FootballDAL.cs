@@ -10,6 +10,8 @@ namespace FinalProject.Models
 {
     public class FootballDAL
     {
+        private static DateTime _timeStamp = DateTime.Now;
+        private static List<Highlight> _cachedHighlights = new List<Highlight>();
         public static string CallTeamAPI(string league, string season)
         {
             string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.clubs.json";
@@ -74,8 +76,8 @@ namespace FinalProject.Models
             string data = CallTeamAPI(league, season);
             FootballClubs r = JsonConvert.DeserializeObject<FootballClubs>(data);
             return r;
-        }      
-      
+        }
+
         public static string CallMatchAPI(string league, string season)
         {
             string url = $"https://raw.githubusercontent.com/openfootball/football.json/master/{season}/{league}.json";
@@ -88,17 +90,31 @@ namespace FinalProject.Models
 
         public static string CallHighlightAPI()
         {
-            string url = $"https://www.scorebat.com/video-api/v1/";
-            HttpWebRequest request = WebRequest.CreateHttp(url);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader rd = new StreamReader(response.GetResponseStream());
-            string output = rd.ReadToEnd();
-            return output;
+            try
+            {
+                string url = $"https://www.scorebat.com/video-api/v1/";
+                HttpWebRequest request = WebRequest.CreateHttp(url);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader rd = new StreamReader(response.GetResponseStream());
+                string output = rd.ReadToEnd();
+                return output;
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         public static List<Highlight> GetHighlights()
         {
+            if (_cachedHighlights.Any() && DateTime.Now - _timeStamp < TimeSpan.FromMinutes(15))
+            {
+                return _cachedHighlights;
+            }
             string data = CallHighlightAPI();
+
+            if (string.IsNullOrWhiteSpace(data)) return new List<Highlight>();
+
             List<Highlight> r = JsonConvert.DeserializeObject<List<Highlight>>(data);
             return r;
         }
@@ -110,7 +126,6 @@ namespace FinalProject.Models
             FootballMatches matches = r;
             return matches;
         }
-
 
         public static List<Match> GetMatchesList(string league, string season)
         {

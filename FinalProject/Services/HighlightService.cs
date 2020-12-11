@@ -7,11 +7,11 @@ namespace FinalProject.Services
 {
     public class HighlightService
     {
+        
         public List<List<Highlight>> GetHighlights()
         {
             List<Highlight> highlights = FootballDAL.GetHighlights();
             List<List<Highlight>> list = SplitList(highlights).ToList();
-
             return list;
         }
 
@@ -22,7 +22,7 @@ namespace FinalProject.Services
             {
                 highlights.AddRange(FootballDAL.GetHighlights().Where(x => x.side1.name == team.TeamName || x.side2.name == team.TeamName));
             }
-            
+
             List<List<Highlight>> list = SplitList(highlights).ToList();
 
             return list;
@@ -39,6 +39,30 @@ namespace FinalProject.Services
                 list.Add(highlights.GetRange(i, Math.Min(10, highlights.Count - i)));
             }
             return list;
+        }
+        public List<List<Highlight>> SearchHighlights(string searchFor)
+        {
+            List<Highlight> highlights = FootballDAL.GetHighlights();
+
+            if (highlights.Any())
+            {
+                List<Highlight> searchResults = new List<Highlight> { };
+
+                foreach (var video in highlights)
+                {
+                    if (video.competition.name.ToLower().Contains(searchFor.ToLower()))
+                    {
+                        searchResults.Add(video);
+                    }
+                    else if (video.title.ToLower().Contains(searchFor.ToLower()))
+                    {
+                        searchResults.Add(video);
+                    }
+                }
+                List<List<Highlight>> list = SplitList(searchResults);
+                return list;
+            }
+            return new List<List<Highlight>>();
         }
     }
 }

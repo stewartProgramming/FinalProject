@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FinalProject.Models.Highlight>
+﻿@model SearchPageModel
 
 @{
     ViewData["Title"] = "SearchHighlights";
@@ -18,7 +18,7 @@
     </thead>
     <tbody>
         @*might need to update to var item in Model*@
-        @foreach (var item in Model)
+        @foreach (var item in Model.AnotherHighlight)
         {
             <tr style="text-align:center">
                 <td>
@@ -53,8 +53,10 @@
     int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
 }
 
-<form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
+<form asp-controller="Home" asp-action="SearchHighlights" style="text-align: center;" method="get">
     @{
+        @Html.HiddenFor(m => m.SearchFor)
+
         if (pageNum >= 2)
         {
             <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
