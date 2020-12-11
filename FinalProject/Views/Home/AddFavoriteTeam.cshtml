@@ -1,0 +1,15 @@
+﻿@model CascadingModel
+@*@{
+        Layout = null;
+    }*@
+
+@using (Html.BeginForm("AddFavoriteTeam", "Home", FormMethod.Post))
+{
+    @Html.DropDownListFor(model => Model.LeagueID, Model.Leagues, "Choose League")
+    if(Model.Teams.Count > 0)
+    {
+    @Html.DropDownListFor(model => Model.TeamID, Model.Teams, "Choose Team")
+    }
+
+    <input type="submit" value="Submit" />
+}

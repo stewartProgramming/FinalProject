@@ -6,9 +6,6 @@
 
 <h1>Probability</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 @{double difference = 0;}
 <table class="table">
     <thead>
@@ -37,7 +34,7 @@
                     difference = Model.Team1Score - Model.Team2Score;
                     @if (difference > 2)
                     {
-                        <p>Projected Winner</p>
+                        <h4>Projected Winner</h4>
                     }
                 }
             </td>
@@ -49,7 +46,7 @@
                     difference = Model.Team2Score - Model.Team1Score;
                     @if (difference > 2)
                     {
-                        <p>Projected Winner</p>
+                        <h4>Projected Winner</h4>
                     }
                 }
             </td>

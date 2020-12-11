@@ -11,6 +11,7 @@ namespace FinalProject.Models
             AspNetUserLogins = new HashSet<AspNetUserLogins>();
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
+            UserFavoriteTeams = new HashSet<UserFavoriteTeams>();
         }
 
         public string Id { get; set; }
@@ -33,5 +34,6 @@ namespace FinalProject.Models
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual ICollection<UserFavoriteTeams> UserFavoriteTeams { get; set; }
     }
 }
