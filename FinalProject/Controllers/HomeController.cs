@@ -143,6 +143,7 @@ namespace FinalProject.Controllers
 
             // Filtering through standings and grabbing selected teams (from match results view)
             foreach (var item in standings)
+ 
             {
                 if (item.team.name == team1)
                 {
@@ -151,6 +152,7 @@ namespace FinalProject.Controllers
             }
 
             foreach (var item in standings)
+
             {
                 if (item.team.name == team2)
                 {
@@ -549,25 +551,146 @@ namespace FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Quiz(string league, string season)
+        public IActionResult Quiz1(string league, string season)
         {
-            FootballMatches matches = FootballDAL.GetMatches(league, season);
+            string[] questions = new string[3];
 
-            Random r = new Random();
-            int index = r.Next(matches.matches.Count);
+            string displayLeague = "";
 
-            Match match = matches.matches[index];
-
-            while (match.score == null)
+            // Showing correct league names in question
+            switch (league)
             {
-                index = r.Next(matches.matches.Count);
-                match = matches.matches[index];
+                case "en.1":
+                    displayLeague = "English";
+                    break;
+                case "es.1":
+                    displayLeague = "Spanish";
+                    break;
+                case "de.1":
+                    displayLeague = "German";
+                    break;
+                case "it.1":
+                    displayLeague = "Italian";
+                    break;
+                case "fr.1":
+                    displayLeague = "French";
+                    break;
+                default:
+                    break;
             }
 
-            TempData["League"] = league;
-            TempData["Season"] = season;
-            TempData["MatchIndex"] = index;
-            return View(match);
+            questions[0] = "Which team won? Or was it a draw?";
+            questions[1] = $"Which team placed first in the {displayLeague} league in the {season} season?";
+            questions[2] = $"Which team placed last in the {displayLeague} league in the {season} season?";
+
+            Random rndQuestion = new Random();
+            int qIndex = rndQuestion.Next(questions.Length);
+
+            if (qIndex == 0)
+            {
+                FootballMatches matches = FootballDAL.GetMatches(league, season);
+
+                Random r = new Random();
+                int index = r.Next(matches.matches.Count);
+
+                Match match = matches.matches[index];
+
+                // Ensures a match with a score is selected
+                while (match.score == null)
+                {
+                    index = r.Next(matches.matches.Count);
+                    match = matches.matches[index];
+                }
+
+                TempData["League"] = league;
+                TempData["Season"] = season;
+                TempData["MatchIndex"] = index;
+                return View(match);
+            }
+            else if (qIndex == 1)
+            {
+                FootballStandings standings = FootballDAL.GetStandings(league, season);
+                var teams = standings.response[0].league.standings[0];
+
+                string correctAnswer = teams[0].team.name;
+
+                Random rndIncorrect = new Random();
+                int index = rndIncorrect.Next(1, teams.Length - 1);
+                string firstIncorrect = teams[index].team.name;
+                index = rndIncorrect.Next(1, teams.Length - 1);
+
+                string secondIncorrect = teams[index].team.name;
+
+                while (secondIncorrect == firstIncorrect)
+                {
+                    secondIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                string thirdIncorrect = teams[index].team.name;
+                while (thirdIncorrect == firstIncorrect || thirdIncorrect == secondIncorrect)
+                {
+                    thirdIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                QuestionMultipleChoice options = new QuestionMultipleChoice();
+                options.Question = questions[1];
+                options.CorrectAnswer = correctAnswer;
+                options.FirstIncorrect = firstIncorrect;
+                options.SecondIncorrect = secondIncorrect;
+                options.ThirdIncorrect = thirdIncorrect;
+
+                return RedirectToAction("Quiz2", options);
+            }
+            else if (qIndex == 2)
+            {
+                FootballStandings standings = FootballDAL.GetStandings(league, season);
+                var teams = standings.response[0].league.standings[0];
+
+                string correctAnswer = teams.Last().team.name;
+
+                Random rndIncorrect = new Random();
+                int index = rndIncorrect.Next(1, teams.Length - 1);
+                string firstIncorrect = teams[index].team.name;
+                index = rndIncorrect.Next(1, teams.Length - 1);
+
+                string secondIncorrect = teams[index].team.name;
+
+                while (secondIncorrect == firstIncorrect)
+                {
+                    secondIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                string thirdIncorrect = teams[index].team.name;
+                while (thirdIncorrect == firstIncorrect || thirdIncorrect == secondIncorrect)
+                {
+                    thirdIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                QuestionMultipleChoice options = new QuestionMultipleChoice();
+                options.Question = questions[2];
+                options.CorrectAnswer = correctAnswer;
+                options.FirstIncorrect = firstIncorrect;
+                options.SecondIncorrect = secondIncorrect;
+                options.ThirdIncorrect = thirdIncorrect;
+
+                return RedirectToAction("Quiz3", options);
+            }
+
+            return View();
+        }
+
+        public IActionResult Quiz2(QuestionMultipleChoice options)
+        {
+            return View(options);
+        }
+
+        public IActionResult Quiz3(QuestionMultipleChoice options)
+        {
+            return View(options);
         }
 
         [HttpPost]
@@ -588,7 +711,7 @@ namespace FinalProject.Controllers
             }
             else if (match.score.ft[0] == match.score.ft[1])
             {
-                winner = "tie";
+                winner = "draw";
             }
 
             if (answer == winner)
@@ -601,6 +724,27 @@ namespace FinalProject.Controllers
             }
             return View(match);
         }
+
+        public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
+        {
+            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
+            quiz2VM.Answer = answer;
+            quiz2VM.RandomAnswers = randomAnswers;
+            quiz2VM.CorrectAnswer = correctAnswer;
+            quiz2VM.Question = question;
+
+            return View(quiz2VM);
+        }
+
+        public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
+        {
+            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
+            quiz2VM.Answer = answer;
+            quiz2VM.RandomAnswers = randomAnswers;
+            quiz2VM.CorrectAnswer = correctAnswer;
+            quiz2VM.Question = question;
+
+            return View(quiz2VM);
 
         public IActionResult AddFavoriteTeam()
         {
@@ -734,6 +878,7 @@ namespace FinalProject.Controllers
             var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var userId = claim.Value;
             return userId;
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
