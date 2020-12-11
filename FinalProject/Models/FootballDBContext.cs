@@ -22,9 +22,13 @@ namespace FinalProject.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<CommunityFavoriteVideos> CommunityFavoriteVideos { get; set; }
         public virtual DbSet<Leagues> Leagues { get; set; }
+        public virtual DbSet<QuizStandings> QuizStandings { get; set; }
         public virtual DbSet<Teams> Teams { get; set; }
         public virtual DbSet<UserFavoriteTeams> UserFavoriteTeams { get; set; }
+        public virtual DbSet<UserFavoriteVideos> UserFavoriteVideos { get; set; }
+        public virtual DbSet<VideoComments> VideoComments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -135,11 +139,38 @@ namespace FinalProject.Models
                 entity.Property(e => e.UserName).HasMaxLength(256);
             });
 
+            modelBuilder.Entity<CommunityFavoriteVideos>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.EmbedCode).HasMaxLength(450);
+
+                entity.Property(e => e.VideoDate).HasColumnType("datetime");
+
+                entity.Property(e => e.VideoTitle)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<Leagues>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.LeagueName).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<QuizStandings>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.QuizStandings)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_UserQuizStanding");
             });
 
             modelBuilder.Entity<Teams>(entity =>
@@ -175,6 +206,57 @@ namespace FinalProject.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserFavorite");
+            });
+
+            modelBuilder.Entity<UserFavoriteVideos>(entity =>
+            {
+                entity.HasKey(e => new { e.VideoId, e.UserId });
+
+                entity.Property(e => e.VideoId).HasColumnName("VideoID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserFavoriteVideos)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserIDFavoriteVideo");
+
+                entity.HasOne(d => d.Video)
+                    .WithMany(p => p.UserFavoriteVideos)
+                    .HasForeignKey(d => d.VideoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EmbedFavoriteVideo");
+            });
+
+            modelBuilder.Entity<VideoComments>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("UserID")
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.VideoComment)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.VideoId).HasColumnName("VideoID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.VideoComments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserIDVideoComments");
+
+                entity.HasOne(d => d.Video)
+                    .WithMany(p => p.VideoComments)
+                    .HasForeignKey(d => d.VideoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_VideoIDComments");
             });
 
             OnModelCreatingPartial(modelBuilder);

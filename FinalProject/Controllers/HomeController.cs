@@ -35,6 +35,9 @@ namespace FinalProject.Controllers
         //figure out what list to display
         public IActionResult RecentHighlights(int? page)
         {
+            // get videoID for items in highlightlist where embed is in CommunityFavoriteVideo
+            //_db.CommunityFavoriteVideos.Where(x => x.EmbedCode == )
+
             List<List<Highlight>> list = _highlightService.GetHighlights();
             if (page == null)
             {
@@ -42,7 +45,23 @@ namespace FinalProject.Controllers
             }
             ViewBag.pageCount = page;
             ViewBag.listCount = list.Count;
-            return View(list[(int)page - 1]);
+
+            // attaching comments to videos
+            string currentEmbed;
+            var videoComments = _db.VideoComments.ToList();
+
+
+            var currentList = list[(int)page - 1];
+            foreach (var match in currentList)
+            {
+                foreach (var video in match.videos)
+                {
+                    currentEmbed = video.embed;
+                    video.VideoComments = videoComments[0];
+                }
+            }
+
+            return View(currentList);
         }
 
         public IActionResult SearchHighlights(string searchFor, int? page)
@@ -716,6 +735,8 @@ namespace FinalProject.Controllers
             }            
             return View(matches);
         }
+
+
 
         public string FindUser()
         {
