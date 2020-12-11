@@ -16,15 +16,16 @@ namespace FinalProject.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //dependency injection for cache
         private readonly HighlightService _highlightService;
         private readonly FootballDBContext _db;
+        private readonly FootballDAL _footballDAL;
 
-        public HomeController(ILogger<HomeController> logger, FootballDBContext db)
+        public HomeController(HighlightService highlightService, FootballDBContext db, FootballDAL footballDAL)
         {
-            _logger = logger;
-            _highlightService = new HighlightService();
+            _highlightService = highlightService;
             _db = db;
+            _footballDAL = footballDAL;
         }
 
         public IActionResult Index()
@@ -36,46 +37,53 @@ namespace FinalProject.Controllers
         public IActionResult RecentHighlights(int? page)
         {
             List<List<Highlight>> list = _highlightService.GetHighlights();
-            if (page == null)
+
+            //if else returns empty list to view to get error message
+            if (list.Any())
             {
-                page = 1;
+                if (page == null)
+                {
+                    page = 1;
+                }
+                ViewBag.pageCount = page;
+                ViewBag.listCount = list.Count;
+                return View(list[(int)page - 1]);
             }
-            ViewBag.pageCount = page;
-            ViewBag.listCount = list.Count;
-            return View(list[(int)page - 1]);
+            else
+            {
+                List<Highlight> emptyList = new List<Highlight> { };
+                return View(emptyList);
+            }
         }
 
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
-            List<Highlight> highlights = FootballDAL.GetHighlights();
-            List<Highlight> searchResults = new List<Highlight> { };
+            List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
+            if (list.Any())
+            {
+                if (page == null)
+                {
+                    page = 1;
+                }
 
-            foreach (var video in highlights)
-            {
-                if (video.competition.name.ToLower().Contains(searchFor.ToLower()))
-                {
-                    searchResults.Add(video);
-                }
-                if (video.title.ToLower().Contains(searchFor.ToLower()))
-                {
-                    searchResults.Add(video);
-                }
+                ViewBag.pageCount = page;
+                ViewBag.listCount = list.Count;
+
+                var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
+                ViewBag.Search = beautifiedSearch;
+
+                SearchPageModel search = new SearchPageModel();
+                search.AnotherHighlight = list[(int)page - 1];
+                search.SearchFor = searchFor;
+
+                return View(search);
             }
-            List<List<Highlight>> list = _highlightService.SplitList(searchResults);
-            if (page == null)
-            {
-                page = 1;
-            }
-            ViewBag.pageCount = page;
-            ViewBag.listCount = list.Count;
-            var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
-            ViewBag.Search = beautifiedSearch;
-            return View(list[(int)page - 1]);
+            return RedirectToAction("Index");
         }
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {
-            FootballStandings standings = FootballDAL.GetStandings(league, season);
+            FootballStandings standings = _footballDAL.GetStandings(league, season);
             return View(standings);
         }
 
@@ -129,12 +137,12 @@ namespace FinalProject.Controllers
 
 
             // Calls the standings API based on league of teams playing
-            var results = FootballDAL.GetStandings(league, "2020");
+            var results = _footballDAL.GetStandings(league, "2020");
             var standings = results.response[0].league.standings[0];
             List<Standing> standingslist = new List<Standing>();
 
             // Filtering through standings and grabbing selected teams (from match results view)
-            foreach(var item in standings)
+            foreach (var item in standings)
             {
                 if (item.team.name == team1)
                 {
@@ -201,7 +209,7 @@ namespace FinalProject.Controllers
 
             int team1GD = standingslist[0].goalsDiff;
             int team2GD = standingslist[1].goalsDiff;
-            
+
             double team1GDScore = 0;
             double team2GDScore = 0;
 
@@ -246,7 +254,7 @@ namespace FinalProject.Controllers
                     {
                         team2GDScore = 4;
                     }
-                } 
+                }
             }
 
             // Adding all the values grabbed and sending them to the VM
@@ -385,7 +393,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamGermany(string team)
+        }
+        public string ConvertTeamGermany(string team)
         {
             switch (team)
             {
@@ -417,7 +426,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamItaly(string team)
+        }
+        public string ConvertTeamItaly(string team)
         {
             switch (team)
             {
@@ -470,7 +480,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamFrance(string team)
+        }
+        public string ConvertTeamFrance(string team)
         {
             switch (team)
             {
@@ -604,7 +615,7 @@ namespace FinalProject.Controllers
                 });
             }
             return View(cm);
-        }        
+        }
 
         [HttpPost]
         public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
@@ -641,8 +652,8 @@ namespace FinalProject.Controllers
                 _db.UserFavoriteTeams.Add(uf);
                 try
                 {
-                _db.SaveChanges();
-                return RedirectToAction("FavoriteTeams");
+                    _db.SaveChanges();
+                    return RedirectToAction("FavoriteTeams");
                 }
                 catch (Exception)
                 {
@@ -674,16 +685,16 @@ namespace FinalProject.Controllers
                                    select t.TeamId;
 
             var favoriteTeams = (from t in _db.UserFavoriteTeams
-                                   where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
-                                   select t.Team).ToList();
+                                 where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
+                                 select t.Team).ToList();
 
             var LeagueID = from all in _db.Teams
                            where favoriteTeamsIDs.Any(x => x == all.Id)
                            select all.LeagueId;
 
             var favoriteTeamLeagues = from l in _db.Leagues
-                                     where LeagueID.Any(x => x.Value == l.Id)
-                                     select l.LeagueName;
+                                      where LeagueID.Any(x => x.Value == l.Id)
+                                      select l.LeagueName;
             List<Match> matches = new List<Match>();
 
             foreach (var league in favoriteTeamLeagues)
@@ -713,7 +724,7 @@ namespace FinalProject.Controllers
                 {
                     matches.AddRange(FootballDAL.GetMatchesList(leagueOut, "2020-21").Where(x => x.team1 == team.TeamName || x.team2 == team.TeamName));
                 }
-            }            
+            }
             return View(matches);
         }
 
