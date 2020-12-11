@@ -247,7 +247,7 @@ namespace FinalProject.Controllers
         [HttpGet]
         public IActionResult Quiz1(string league, string season)
         {
-            string[] questions = new string[2];
+            string[] questions = new string[3];
 
             string displayLeague = "";
 
@@ -275,6 +275,7 @@ namespace FinalProject.Controllers
 
             questions[0] = "Which team won? Or was it a draw?";
             questions[1] = $"Which team placed first in the {displayLeague} league in the {season} season?";
+            questions[2] = $"Which team placed last in the {displayLeague} league in the {season} season?";
 
             Random rndQuestion = new Random();
             int qIndex = rndQuestion.Next(questions.Length);
@@ -336,12 +337,52 @@ namespace FinalProject.Controllers
 
                 return RedirectToAction("Quiz2", options);
             }
+            else if (qIndex == 2)
+            {
+                FootballStandings standings = FootballDAL.GetStandings(league, season);
+                var teams = standings.response[0].league.standings[0];
+
+                string correctAnswer = teams.Last().team.name;
+
+                Random rndIncorrect = new Random();
+                int index = rndIncorrect.Next(1, teams.Length - 1);
+                string firstIncorrect = teams[index].team.name;
+                index = rndIncorrect.Next(1, teams.Length - 1);
+
+                string secondIncorrect = teams[index].team.name;
+
+                while (secondIncorrect == firstIncorrect)
+                {
+                    secondIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                string thirdIncorrect = teams[index].team.name;
+                while (thirdIncorrect == firstIncorrect || thirdIncorrect == secondIncorrect)
+                {
+                    thirdIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                QuestionMultipleChoice options = new QuestionMultipleChoice();
+                options.Question = questions[2];
+                options.CorrectAnswer = correctAnswer;
+                options.FirstIncorrect = firstIncorrect;
+                options.SecondIncorrect = secondIncorrect;
+                options.ThirdIncorrect = thirdIncorrect;
+
+                return RedirectToAction("Quiz3", options);
+            }
 
             return View();
-
         }
 
         public IActionResult Quiz2(QuestionMultipleChoice options)
+        {
+            return View(options);
+        }
+
+        public IActionResult Quiz3(QuestionMultipleChoice options)
         {
             return View(options);
         }
@@ -379,6 +420,17 @@ namespace FinalProject.Controllers
         }
 
         public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
+        {
+            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
+            quiz2VM.Answer = answer;
+            quiz2VM.RandomAnswers = randomAnswers;
+            quiz2VM.CorrectAnswer = correctAnswer;
+            quiz2VM.Question = question;
+
+            return View(quiz2VM);
+        }
+
+        public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
             Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
             quiz2VM.Answer = answer;
