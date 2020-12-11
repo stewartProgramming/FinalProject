@@ -24,7 +24,7 @@ namespace FinalProject.Models
         {
             string url = $"https://api-football-beta.p.rapidapi.com/standings?season={season}&league={league}";
             HttpWebRequest request = WebRequest.CreateHttp(url);
-            request.Headers.Add("x-rapidapi-key", "8ee6bb1f97msh72388712e57f0eep108ff5jsnb7ec224de70c");
+            request.Headers.Add("x-rapidapi-key", "e9155298f4mshdf710f74793ee32p1ade62jsn2be723dac481");
             request.Headers.Add("x-rapidapi-host", "api-football-beta.p.rapidapi.com");
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader rd = new StreamReader(response.GetResponseStream());
@@ -32,6 +32,7 @@ namespace FinalProject.Models
             return output;
         }
 
+        //Converts league names between APIs
         public static FootballStandings GetStandings(string league, string season)
         {
             if (league == "en.1")
