@@ -84,6 +84,7 @@ body {
 
 .rTable {
     display: table;
+    margin:10px;
 }
 
 .rTableRow {
@@ -124,6 +125,7 @@ body {
 
     .rTableRow div {
         display: table-cell;
+
     }
 
 #indexContainer {
@@ -137,4 +139,8 @@ body {
     min-height: 25%;
     margin-top: 20em;
     width: 50%;
+}
+
+td {
+    color: silver;
 }
