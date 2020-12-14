@@ -1,66 +1,23 @@
-﻿<form>
-
-    <label for="league">Select league</label>
-    <select name="league" id="league">
-        <option value="en.1">England</option>
-        <option value="es.1">Spain</option>
-        <option value="de.1">Germany</option>
-        <option value="it.1">Italy</option>
-        <option value="fr.1">France</option>
-    </select>
-    <label for="season">Select season</label>
-    <select name="season" id="season">
-        <option value="2020-21">2020/2021</option>
-        <option value="2019-20">2019/2020</option>
-    </select>
-    <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
-    <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
-    <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
-
-        <label for="league">Select league</label>
-        <select name="league" id="league">
-            <option value="en.1">England</option>
-            <option value="es.1">Spain</option>
-            <option value="de.1">Germany</option>
-            <option value="it.1">Italy</option>
-            <option value="fr.1">France</option>
-        </select>
-        <label for="season">Select season</label>
-        <select name="season" id="season">
-            <option value="2020-21">2020/2021</option>
-            <option value="2019-20">2019/2020</option>
-        </select>
-
-        <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
-        <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
-        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
-
-</form>
-<br />
-
-<form asp-controller="Home" asp-action="Quiz1" method="get">
-
-    <label for="league">Select league</label>
-    <select name="league" id="league">
-        <option value="en.1">England</option>
-        <option value="es.1">Spain</option>
-        <option value="de.1">Germany</option>
-        <option value="it.1">Italy</option>
-        <option value="fr.1">France</option>
-    </select>
-    <label for="season">Select season</label>
-    <select name="season" id="season">
-        <option value="2020-21">2020/2021</option>
-        <option value="2019-20">2019/2020</option>
-    </select>
-    <input type="submit" value="Quiz" />
-
-</form>
-
-<form asp-controller="Home" asp-action="RecentHighlights">
-    <input type="submit" value="Recent Highlights" />
-</form>
-<br />
-<form asp-controller="Home" asp-action="FavoriteTeams">
-    <input type="submit" value="Favorite Team Matches" />
-</form>
+﻿<div id="indexContainer" class="container-fluid d-flex justify-content-center align-items-center h-100">
+    <form id="indexForm">
+        <div class="form-group h-100">
+            <label for="league">Select league</label>
+            <select name="league" id="league">
+                <option value="en.1">England</option>
+                <option value="es.1">Spain</option>
+                <option value="de.1">Germany</option>
+                <option value="it.1">Italy</option>
+                <option value="fr.1">France</option>
+            </select>
+            <label for="season">Select season</label>
+            <select name="season" id="season">
+                <option value="2020-21">2020/2021</option>
+                <option value="2019-20">2019/2020</option>
+            </select>
+            <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
+            <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
+            <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
+            <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+        </div>
+    </form>
+</div>
