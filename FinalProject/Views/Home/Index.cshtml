@@ -1,4 +1,4 @@
-﻿<form>
+﻿<form style="text-align: center;">
 
     <label for="league">Select league</label>
     <select name="league" id="league">
@@ -13,9 +13,25 @@
         <option value="2020-21">2020/2021</option>
         <option value="2019-20">2019/2020</option>
     </select>
+    <br />
+
     <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
     <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
     <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
+    <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+
+</form>
+@*<br />
+
+    <form>
+        <input type="submit" asp-controller="Home" asp-action="FavoriteTeams" value="Favorite Team Matches" formmethod="post" />
+        <input type="submit" asp-controller="Home" asp-action="RecentHighlights" value="Recent Highlights" formmethod="post" />
+
+    </form>
+
+    vvvvv what we had       ^^^^^^^ what I did before adding both to the nav bar*@
+
+@*<form asp-controller="Home" asp-action="Quiz1" method="get">
 
         <label for="league">Select league</label>
         <select name="league" id="league">
@@ -30,37 +46,14 @@
             <option value="2020-21">2020/2021</option>
             <option value="2019-20">2019/2020</option>
         </select>
+        <input type="submit" value="Quiz" />
 
-        <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
-        <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
-        <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
+    </form>*@
 
-</form>
-<br />
-
-<form asp-controller="Home" asp-action="Quiz1" method="get">
-
-    <label for="league">Select league</label>
-    <select name="league" id="league">
-        <option value="en.1">England</option>
-        <option value="es.1">Spain</option>
-        <option value="de.1">Germany</option>
-        <option value="it.1">Italy</option>
-        <option value="fr.1">France</option>
-    </select>
-    <label for="season">Select season</label>
-    <select name="season" id="season">
-        <option value="2020-21">2020/2021</option>
-        <option value="2019-20">2019/2020</option>
-    </select>
-    <input type="submit" value="Quiz" />
-
-</form>
-
-<form asp-controller="Home" asp-action="RecentHighlights">
-    <input type="submit" value="Recent Highlights" />
-</form>
-<br />
-<form asp-controller="Home" asp-action="FavoriteTeams">
-    <input type="submit" value="Favorite Team Matches" />
-</form>
+@*<form asp-controller="Home" asp-action="RecentHighlights">
+        <input type="submit" value="Recent Highlights" />
+    </form>
+    <br />
+    <form asp-controller="Home" asp-action="FavoriteTeams">
+        <input type="submit" value="Favorite Team Matches" />
+    </form>*@
