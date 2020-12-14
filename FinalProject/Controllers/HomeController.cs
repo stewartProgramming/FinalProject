@@ -182,6 +182,9 @@ namespace FinalProject.Controllers
         public IActionResult MatchResults(string league, string season)
         {
             FootballMatches clubs = FootballDAL.GetMatches(league, season);
+
+            ViewBag.Season = season;
+
             return View(clubs);
         }
 
@@ -832,8 +835,6 @@ namespace FinalProject.Controllers
             return View(quiz2VM);
         }
 
-
-
         public IActionResult AddFavoriteTeam()
         {
             CascadingModel cm = new CascadingModel();
@@ -960,8 +961,6 @@ namespace FinalProject.Controllers
             }
             return View(matches);
         }
-
-
 
         public string FindUser()
         {
