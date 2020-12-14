@@ -747,6 +747,8 @@ namespace FinalProject.Controllers
             return View(quiz2VM);
         }
 
+
+
         public IActionResult AddFavoriteTeam()
         {
             CascadingModel cm = new CascadingModel();
