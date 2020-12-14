@@ -182,6 +182,9 @@ namespace FinalProject.Controllers
         public IActionResult MatchResults(string league, string season)
         {
             FootballMatches clubs = FootballDAL.GetMatches(league, season);
+
+            ViewBag.Season = season;
+
             return View(clubs);
         }
 

@@ -4,9 +4,19 @@
     ViewData["Title"] = "MatchResults";
 }
 
+@{bool oldSeason = true;
+    foreach (var match in Model.matches)
+    {
+        if (match.score == null)
+        {
+            oldSeason = false;
+        }
+    }
+    }
+
 <h1 style="text-align:center">@Model.name Matches</h1>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th style="text-align:center">
@@ -18,9 +28,12 @@
             <th style="text-align:center">
                 Away
             </th>
-            <th style="text-align:center">
-                Probability
-            </th>
+            @if (oldSeason == false)
+            {
+                <th style="text-align:center">
+                    Probability
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
