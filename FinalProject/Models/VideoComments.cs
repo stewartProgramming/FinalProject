@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinalProject.Models
 {
@@ -7,7 +9,9 @@ namespace FinalProject.Models
     {
         public int Id { get; set; }
         public int VideoId { get; set; }
-        public string UserId { get; set; }
+
+        [ForeignKey("AspNetUsers")]
+        public virtual string UserId { get; set; }
         public string VideoComment { get; set; }
         public DateTime DateCreated { get; set; }
 

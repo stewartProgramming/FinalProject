@@ -36,9 +36,10 @@ namespace FinalProject.Controllers
         //figure out what list to display
         public IActionResult RecentHighlights(int? page)
         {
-            List<List<Highlight>> list = _highlightService.GetHighlights();
+            // get videoID for items in highlightlist where embed is in CommunityFavoriteVideo
+            //_db.CommunityFavoriteVideos.Where(x => x.EmbedCode == )
 
-            //if else returns empty list to view to get error message
+            List<List<Highlight>> list = _highlightService.GetHighlights();
             if (list.Any())
             {
                 if (page == null)
@@ -47,15 +48,99 @@ namespace FinalProject.Controllers
                 }
                 ViewBag.pageCount = page;
                 ViewBag.listCount = list.Count;
-                return View(list[(int)page - 1]);
+
+                // attaching comments to videos
+                string currentEmbedForView;
+                var videoComments = _db.VideoComments.ToList();
+                List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+                foreach (var vc in videoComments)
+                {
+                    matchingVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vc.VideoId));
+                }
+                // dictionary videoID: embed
+                // 
+
+                var currentList = list[(int)page - 1];
+                foreach (var match in currentList)
+                {
+                    foreach (var video in match.videos)
+                    {
+                        currentEmbedForView = video.embed;
+                        foreach (var v in matchingVideos.Distinct())
+                        {
+                            if (currentEmbedForView == v.EmbedCode)
+                            {
+                                //video.VideoComments = (VideoComments) videoComments.Where(x => x.VideoId == v.Id).FirstOrDefault();
+                                List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+                                foreach (var item in vc)
+                                {
+                                    item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+                                }
+                                video.VideoComments = vc;
+                            }
+                        }
+                    }
+                }
+                ViewData["userId"] = FindUser();
+
+                return View(currentList);
             }
             else
             {
                 List<Highlight> emptyList = new List<Highlight> { };
                 return View(emptyList);
             }
+            
+        }
+        [HttpPost]
+        public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                   where v.EmbedCode == videoEmbed
+                                   select v.Id).FirstOrDefault();
+            if(communityFavoriteVideoID == 0)
+            {
+                CommunityFavoriteVideos fv = new CommunityFavoriteVideos();
+                fv.EmbedCode = videoEmbed;
+                fv.VideoDate = videoDate;
+                fv.VideoTitle = videoTitle;
+                _db.CommunityFavoriteVideos.Add(fv);
+                _db.SaveChanges();
+            }            
+
+            VideoComments vc = new VideoComments();
+            vc.VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id;
+            vc.DateCreated = DateTime.Now;
+            vc.UserId = FindUser();
+            vc.VideoComment = comment;
+            _db.VideoComments.Add(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights", new { page = page });
         }
 
+        [HttpPost]
+        public IActionResult EditComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            return View(vc);
+        }
+
+        public IActionResult DeleteComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            _db.VideoComments.Remove(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
+        [HttpPost]
+        public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
+        {
+            VideoComments vc = _db.VideoComments.Find(Id);
+            vc.VideoComment = VideoComment;
+            _db.VideoComments.Update(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
@@ -750,8 +835,6 @@ namespace FinalProject.Controllers
             return View(quiz2VM);
         }
 
-
-
         public IActionResult AddFavoriteTeam()
         {
             CascadingModel cm = new CascadingModel();
@@ -883,7 +966,11 @@ namespace FinalProject.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var userId = claim.Value;
+            string userId = "";
+            if (claim != null)
+            {
+                userId = claim.Value;
+            }
             return userId;
 
         }
