@@ -20,7 +20,14 @@
     <thead>
         <tr>
             <th style="text-align:center">
-                Matchday
+                <form asp-controller="Home" asp-action="LeagueStandings">
+                    <input type="hidden" value="@ViewBag.League" name="league"/>
+                    <input type="hidden" value="@ViewBag.Season" name="season"/>
+                    <input type="submit" value="Standings"/>
+                </form>
+            </th>
+            <th style="text-align: center">
+                Date
             </th>
             <th style="text-align:center">
                 Home
@@ -41,21 +48,36 @@
         <tr>
             <td style="text-align:center">
                 @Html.DisplayFor(modelItem => item.round) 
-                <br />
+            </td>
+            <td style="text-align: center">
                 @Html.DisplayFor(modelItem => item.date)
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team1)
-                <br />
-                [@Html.DisplayFor(modelItem => item.score.ft[0])]
+                @{
+                    if (item.score == null)
+                    {
+                        <p>@Html.DisplayFor(modelItem => item.team1) </p>
+                    }
+                    else
+                    {
+            <p>@Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]</p>
+                    }
+                }
+            </td>
+            <td style="text-align: center">
+                @{
+                    if (item.score == null)
+                    {
+                        <p>@Html.DisplayFor(modelItem => item.team2) </p>
+                    }
+                    else
+                    {
+            <p>@Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]</p> 
+                    }
+                }
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team2)
-                <br />
-                [@Html.DisplayFor(modelItem => item.score.ft[1])]
-            </td>
-            <td style="text-align:center">
-                @if (item.score == null)
+                @if (item.score == null && item.round != "Matchday 1")
                 {
                     <form asp-controller="Home" asp-action="Probability" method="get">
                         <input type="hidden" value="@Model.name" name="league" />

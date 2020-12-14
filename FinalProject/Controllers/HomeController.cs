@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FinalProject.Controllers
 {
@@ -30,6 +31,9 @@ namespace FinalProject.Controllers
 
         public IActionResult Index()
         {
+            var highlights = FootballDAL.CallHighlightAPI();
+            List<Highlight> firstVideo = JsonConvert.DeserializeObject<List<Highlight>>(highlights);
+            ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
             return View();
         }
 
@@ -182,7 +186,7 @@ namespace FinalProject.Controllers
         public IActionResult MatchResults(string league, string season)
         {
             FootballMatches clubs = FootballDAL.GetMatches(league, season);
-
+            ViewBag.League = league;
             ViewBag.Season = season;
 
             return View(clubs);
