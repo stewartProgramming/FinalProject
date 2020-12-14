@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalProject.Models
 {
@@ -11,9 +12,13 @@ namespace FinalProject.Models
             AspNetUserLogins = new HashSet<AspNetUserLogins>();
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
+            QuizStandings = new HashSet<QuizStandings>();
             UserFavoriteTeams = new HashSet<UserFavoriteTeams>();
+            UserFavoriteVideos = new HashSet<UserFavoriteVideos>();
+            UserPredictions = new HashSet<UserPredictions>();
+            VideoComments = new HashSet<VideoComments>();
         }
-
+        [Key]
         public string Id { get; set; }
         public string UserName { get; set; }
         public string NormalizedUserName { get; set; }
@@ -34,6 +39,10 @@ namespace FinalProject.Models
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual ICollection<QuizStandings> QuizStandings { get; set; }
         public virtual ICollection<UserFavoriteTeams> UserFavoriteTeams { get; set; }
+        public virtual ICollection<UserFavoriteVideos> UserFavoriteVideos { get; set; }
+        public virtual ICollection<UserPredictions> UserPredictions { get; set; }
+        public virtual ICollection<VideoComments> VideoComments { get; set; }
     }
 }

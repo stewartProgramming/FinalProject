@@ -1,0 +1,45 @@
+﻿@model QuestionMultipleChoice
+
+@{
+    ViewData["Title"] = "Quiz3";
+}
+
+@{ List<string> allAnswers = new List<string>();
+    allAnswers.Add(Model.CorrectAnswer);
+    allAnswers.Add(Model.FirstIncorrect);
+    allAnswers.Add(Model.SecondIncorrect);
+    allAnswers.Add(Model.ThirdIncorrect);
+
+    Random randomSort = new Random();
+    int randomIndex = randomSort.Next(0, allAnswers.Count - 1);
+
+    List<string> randomAnswers = new List<string>();
+    while (allAnswers.Count > 0)
+    {
+        randomAnswers.Add(allAnswers[randomIndex]);
+        allAnswers.RemoveAt(randomIndex);
+        randomIndex = randomSort.Next(0, allAnswers.Count);
+    }
+}
+
+<h1>Test Your Football Knowledge</h1>
+
+<hr />
+
+<p>@Model.Question</p>
+
+<form asp-action="Quiz3Result" asp-controller="Home" method="post">
+
+    <input type="hidden" name="question" value="@Model.Question" />
+    <input type="hidden" name="correctAnswer" value="@Model.CorrectAnswer" />
+
+    @foreach (var answer in randomAnswers)
+    {
+        <input type="hidden" name="randomAnswers" value="@answer" />
+        <label>
+            <input type="radio" name="answer" value="@answer" /> @answer &ensp;
+        </label>
+        <br />
+    }
+    <input type="submit" value="Submit Answer" />
+</form>

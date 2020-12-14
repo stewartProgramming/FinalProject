@@ -15,7 +15,7 @@
 <p>Date of Match: <b>@Model.date</b></p>
 <p><b>@Model.team1</b> vs. <b>@Model.team2</b></p>
 
-<p>Which team won? Or was it a tie?</p>
+<p>Which team won? Or was it a draw?</p>
 
 <form asp-action="QuizResult" asp-controller="Home" method="post">
 
@@ -35,7 +35,7 @@
     </label>
 
     <label>
-        <input type="radio" name="answer" value="tie" /> Tie
+        <input type="radio" name="answer" value="draw" /> Draw
     </label>
 
     <br /><br />

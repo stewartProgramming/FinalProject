@@ -1,45 +1,46 @@
 ﻿@model List<FinalProject.Models.Match>
 
-@{
-    ViewData["Title"] = "MatchResults";
-}
+    @{
+        ViewData["Title"] = "MatchResults";
+    }
 
-<h1>Favorite Team Match Results</h1>
-<button type="button" onclick="location.href='@Url.Action("AddFavoriteTeam", "Home")'" >Add More</button>
-<table class="table">
-    <thead>
-        <tr>
-            <th style="text-align:center">
-                Matchday
-            </th>
-            <th style="text-align:center">
-                Home
-            </th>
-            <th style="text-align:center">
-                Away
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <h1 style="text-align:center">Favorite Team Match Results</h1>
+    <button type="button" onclick="location.href='@Url.Action("AddFavoriteTeam", "Home")'" >Add More</button>
+    <br />
+    <table class="table">
+        <thead>
             <tr>
-                <td style="text-align:center">
-                    @Html.DisplayFor(modelItem => item.round)
-                    <br />
-                    @Html.DisplayFor(modelItem => item.date)
-                </td>
-                <td style="text-align:center">
-                    @Html.DisplayFor(modelItem => item.team1)
-                    <br />
-                    [@Html.DisplayFor(modelItem => item.score.ft[0])]
-                </td>
-                <td style="text-align:center">
-                    @Html.DisplayFor(modelItem => item.team2)
-                    <br />
-                    [@Html.DisplayFor(modelItem => item.score.ft[1])]
-                </td>
+                <th style="text-align:center">
+                    Matchday
+                </th>
+                <th style="text-align:center">
+                    Home
+                </th>
+                <th style="text-align:center">
+                    Away
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.round)
+                        <br />
+                        @Html.DisplayFor(modelItem => item.date)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.team1)
+                        <br />
+                        [@Html.DisplayFor(modelItem => item.score.ft[0])]
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.team2)
+                        <br />
+                        [@Html.DisplayFor(modelItem => item.score.ft[1])]
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

@@ -16,15 +16,16 @@ namespace FinalProject.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //dependency injection for cache
         private readonly HighlightService _highlightService;
         private readonly FootballDBContext _db;
+        private readonly FootballDAL _footballDAL;
 
-        public HomeController(ILogger<HomeController> logger, FootballDBContext db)
+        public HomeController(HighlightService highlightService, FootballDBContext db, FootballDAL footballDAL)
         {
-            _logger = logger;
-            _highlightService = new HighlightService();
+            _highlightService = highlightService;
             _db = db;
+            _footballDAL = footballDAL;
         }
 
         public IActionResult Index()
@@ -35,47 +36,139 @@ namespace FinalProject.Controllers
         //figure out what list to display
         public IActionResult RecentHighlights(int? page)
         {
+            // get videoID for items in highlightlist where embed is in CommunityFavoriteVideo
+            //_db.CommunityFavoriteVideos.Where(x => x.EmbedCode == )
+
             List<List<Highlight>> list = _highlightService.GetHighlights();
-            if (page == null)
+            if (list.Any())
             {
-                page = 1;
+                if (page == null)
+                {
+                    page = 1;
+                }
+                ViewBag.pageCount = page;
+                ViewBag.listCount = list.Count;
+
+                // attaching comments to videos
+                string currentEmbedForView;
+                var videoComments = _db.VideoComments.ToList();
+                List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+                foreach (var vc in videoComments)
+                {
+                    matchingVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vc.VideoId));
+                }
+                // dictionary videoID: embed
+                // 
+
+                var currentList = list[(int)page - 1];
+                foreach (var match in currentList)
+                {
+                    foreach (var video in match.videos)
+                    {
+                        currentEmbedForView = video.embed;
+                        foreach (var v in matchingVideos.Distinct())
+                        {
+                            if (currentEmbedForView == v.EmbedCode)
+                            {
+                                //video.VideoComments = (VideoComments) videoComments.Where(x => x.VideoId == v.Id).FirstOrDefault();
+                                List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+                                foreach (var item in vc)
+                                {
+                                    item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+                                }
+                                video.VideoComments = vc;
+                            }
+                        }
+                    }
+                }
+                ViewData["userId"] = FindUser();
+
+                return View(currentList);
             }
-            ViewBag.pageCount = page;
-            ViewBag.listCount = list.Count;
-            return View(list[(int)page - 1]);
+            else
+            {
+                List<Highlight> emptyList = new List<Highlight> { };
+                return View(emptyList);
+            }
+            
+        }
+        [HttpPost]
+        public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                   where v.EmbedCode == videoEmbed
+                                   select v.Id).FirstOrDefault();
+            if(communityFavoriteVideoID == 0)
+            {
+                CommunityFavoriteVideos fv = new CommunityFavoriteVideos();
+                fv.EmbedCode = videoEmbed;
+                fv.VideoDate = videoDate;
+                fv.VideoTitle = videoTitle;
+                _db.CommunityFavoriteVideos.Add(fv);
+                _db.SaveChanges();
+            }            
+
+            VideoComments vc = new VideoComments();
+            vc.VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id;
+            vc.DateCreated = DateTime.Now;
+            vc.UserId = FindUser();
+            vc.VideoComment = comment;
+            _db.VideoComments.Add(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights", new { page = page });
         }
 
+        [HttpPost]
+        public IActionResult EditComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            return View(vc);
+        }
+
+        public IActionResult DeleteComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            _db.VideoComments.Remove(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
+        [HttpPost]
+        public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
+        {
+            VideoComments vc = _db.VideoComments.Find(Id);
+            vc.VideoComment = VideoComment;
+            _db.VideoComments.Update(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
-            List<Highlight> highlights = FootballDAL.GetHighlights();
-            List<Highlight> searchResults = new List<Highlight> { };
+            List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
+            if (list.Any())
+            {
+                if (page == null)
+                {
+                    page = 1;
+                }
 
-            foreach (var video in highlights)
-            {
-                if (video.competition.name.ToLower().Contains(searchFor.ToLower()))
-                {
-                    searchResults.Add(video);
-                }
-                if (video.title.ToLower().Contains(searchFor.ToLower()))
-                {
-                    searchResults.Add(video);
-                }
+                ViewBag.pageCount = page;
+                ViewBag.listCount = list.Count;
+
+                var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
+                ViewBag.Search = beautifiedSearch;
+
+                SearchPageModel search = new SearchPageModel();
+                search.AnotherHighlight = list[(int)page - 1];
+                search.SearchFor = searchFor;
+
+                return View(search);
             }
-            List<List<Highlight>> list = _highlightService.SplitList(searchResults);
-            if (page == null)
-            {
-                page = 1;
-            }
-            ViewBag.pageCount = page;
-            ViewBag.listCount = list.Count;
-            var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
-            ViewBag.Search = beautifiedSearch;
-            return View(list[(int)page - 1]);
+            return RedirectToAction("Index");
         }
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {
-            FootballStandings standings = FootballDAL.GetStandings(league, season);
+            FootballStandings standings = _footballDAL.GetStandings(league, season);
             return View(standings);
         }
 
@@ -129,12 +222,13 @@ namespace FinalProject.Controllers
 
 
             // Calls the standings API based on league of teams playing
-            var results = FootballDAL.GetStandings(league, "2020");
+            var results = _footballDAL.GetStandings(league, "2020");
             var standings = results.response[0].league.standings[0];
             List<Standing> standingslist = new List<Standing>();
 
             // Filtering through standings and grabbing selected teams (from match results view)
-            foreach(var item in standings)
+            foreach (var item in standings)
+ 
             {
                 if (item.team.name == team1)
                 {
@@ -143,6 +237,7 @@ namespace FinalProject.Controllers
             }
 
             foreach (var item in standings)
+
             {
                 if (item.team.name == team2)
                 {
@@ -201,7 +296,7 @@ namespace FinalProject.Controllers
 
             int team1GD = standingslist[0].goalsDiff;
             int team2GD = standingslist[1].goalsDiff;
-            
+
             double team1GDScore = 0;
             double team2GDScore = 0;
 
@@ -246,7 +341,7 @@ namespace FinalProject.Controllers
                     {
                         team2GDScore = 4;
                     }
-                } 
+                }
             }
 
             // Adding all the values grabbed and sending them to the VM
@@ -385,7 +480,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamGermany(string team)
+        }
+        public string ConvertTeamGermany(string team)
         {
             switch (team)
             {
@@ -417,7 +513,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamItaly(string team)
+        }
+        public string ConvertTeamItaly(string team)
         {
             switch (team)
             {
@@ -470,7 +567,8 @@ namespace FinalProject.Controllers
                     break;
             }
             return team;
-        }public string ConvertTeamFrance(string team)
+        }
+        public string ConvertTeamFrance(string team)
         {
             switch (team)
             {
@@ -538,25 +636,146 @@ namespace FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Quiz(string league, string season)
+        public IActionResult Quiz1(string league, string season)
         {
-            FootballMatches matches = FootballDAL.GetMatches(league, season);
+            string[] questions = new string[3];
 
-            Random r = new Random();
-            int index = r.Next(matches.matches.Count);
+            string displayLeague = "";
 
-            Match match = matches.matches[index];
-
-            while (match.score == null)
+            // Showing correct league names in question
+            switch (league)
             {
-                index = r.Next(matches.matches.Count);
-                match = matches.matches[index];
+                case "en.1":
+                    displayLeague = "English";
+                    break;
+                case "es.1":
+                    displayLeague = "Spanish";
+                    break;
+                case "de.1":
+                    displayLeague = "German";
+                    break;
+                case "it.1":
+                    displayLeague = "Italian";
+                    break;
+                case "fr.1":
+                    displayLeague = "French";
+                    break;
+                default:
+                    break;
             }
 
-            TempData["League"] = league;
-            TempData["Season"] = season;
-            TempData["MatchIndex"] = index;
-            return View(match);
+            questions[0] = "Which team won? Or was it a draw?";
+            questions[1] = $"Which team placed first in the {displayLeague} league in the {season} season?";
+            questions[2] = $"Which team placed last in the {displayLeague} league in the {season} season?";
+
+            Random rndQuestion = new Random();
+            int qIndex = rndQuestion.Next(questions.Length);
+
+            if (qIndex == 0)
+            {
+                FootballMatches matches = FootballDAL.GetMatches(league, season);
+
+                Random r = new Random();
+                int index = r.Next(matches.matches.Count);
+
+                Match match = matches.matches[index];
+
+                // Ensures a match with a score is selected
+                while (match.score == null)
+                {
+                    index = r.Next(matches.matches.Count);
+                    match = matches.matches[index];
+                }
+
+                TempData["League"] = league;
+                TempData["Season"] = season;
+                TempData["MatchIndex"] = index;
+                return View(match);
+            }
+            else if (qIndex == 1)
+            {
+                FootballStandings standings = _footballDAL.GetStandings(league, season);
+                var teams = standings.response[0].league.standings[0];
+
+                string correctAnswer = teams[0].team.name;
+
+                Random rndIncorrect = new Random();
+                int index = rndIncorrect.Next(1, teams.Length - 1);
+                string firstIncorrect = teams[index].team.name;
+                index = rndIncorrect.Next(1, teams.Length - 1);
+
+                string secondIncorrect = teams[index].team.name;
+
+                while (secondIncorrect == firstIncorrect)
+                {
+                    secondIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                string thirdIncorrect = teams[index].team.name;
+                while (thirdIncorrect == firstIncorrect || thirdIncorrect == secondIncorrect)
+                {
+                    thirdIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                QuestionMultipleChoice options = new QuestionMultipleChoice();
+                options.Question = questions[1];
+                options.CorrectAnswer = correctAnswer;
+                options.FirstIncorrect = firstIncorrect;
+                options.SecondIncorrect = secondIncorrect;
+                options.ThirdIncorrect = thirdIncorrect;
+
+                return RedirectToAction("Quiz2", options);
+            }
+            else if (qIndex == 2)
+            {
+                FootballStandings standings = _footballDAL.GetStandings(league, season);
+                var teams = standings.response[0].league.standings[0];
+
+                string correctAnswer = teams.Last().team.name;
+
+                Random rndIncorrect = new Random();
+                int index = rndIncorrect.Next(1, teams.Length - 1);
+                string firstIncorrect = teams[index].team.name;
+                index = rndIncorrect.Next(1, teams.Length - 1);
+
+                string secondIncorrect = teams[index].team.name;
+
+                while (secondIncorrect == firstIncorrect)
+                {
+                    secondIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                string thirdIncorrect = teams[index].team.name;
+                while (thirdIncorrect == firstIncorrect || thirdIncorrect == secondIncorrect)
+                {
+                    thirdIncorrect = teams[index].team.name;
+                    index = rndIncorrect.Next(1, teams.Length - 1);
+                }
+
+                QuestionMultipleChoice options = new QuestionMultipleChoice();
+                options.Question = questions[2];
+                options.CorrectAnswer = correctAnswer;
+                options.FirstIncorrect = firstIncorrect;
+                options.SecondIncorrect = secondIncorrect;
+                options.ThirdIncorrect = thirdIncorrect;
+
+                return RedirectToAction("Quiz3", options);
+            }
+
+            return View();
+        }
+
+        public IActionResult Quiz2(QuestionMultipleChoice options)
+        {
+            return View(options);
+        }
+
+        public IActionResult Quiz3(QuestionMultipleChoice options)
+        {
+            return View(options);
         }
 
         [HttpPost]
@@ -577,7 +796,7 @@ namespace FinalProject.Controllers
             }
             else if (match.score.ft[0] == match.score.ft[1])
             {
-                winner = "tie";
+                winner = "draw";
             }
 
             if (answer == winner)
@@ -590,6 +809,30 @@ namespace FinalProject.Controllers
             }
             return View(match);
         }
+
+        public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
+        {
+            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
+            quiz2VM.Answer = answer;
+            quiz2VM.RandomAnswers = randomAnswers;
+            quiz2VM.CorrectAnswer = correctAnswer;
+            quiz2VM.Question = question;
+
+            return View(quiz2VM);
+        }
+
+        public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
+        {
+            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
+            quiz2VM.Answer = answer;
+            quiz2VM.RandomAnswers = randomAnswers;
+            quiz2VM.CorrectAnswer = correctAnswer;
+            quiz2VM.Question = question;
+
+            return View(quiz2VM);
+        }
+
+
 
         public IActionResult AddFavoriteTeam()
         {
@@ -604,7 +847,7 @@ namespace FinalProject.Controllers
                 });
             }
             return View(cm);
-        }        
+        }
 
         [HttpPost]
         public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
@@ -641,8 +884,8 @@ namespace FinalProject.Controllers
                 _db.UserFavoriteTeams.Add(uf);
                 try
                 {
-                _db.SaveChanges();
-                return RedirectToAction("FavoriteTeams");
+                    _db.SaveChanges();
+                    return RedirectToAction("FavoriteTeams");
                 }
                 catch (Exception)
                 {
@@ -674,16 +917,17 @@ namespace FinalProject.Controllers
                                    select t.TeamId;
 
             var favoriteTeams = (from t in _db.UserFavoriteTeams
-                                   where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
-                                   select t.Team).ToList();
+                                 where _db.UserFavoriteTeams.Any(x => x.UserId == FindUser())
+                                 select t.Team).ToList();
 
             var LeagueID = from all in _db.Teams
                            where favoriteTeamsIDs.Any(x => x == all.Id)
                            select all.LeagueId;
 
             var favoriteTeamLeagues = from l in _db.Leagues
-                                     where LeagueID.Any(x => x.Value == l.Id)
-                                     select l.LeagueName;
+                                      where LeagueID.Any(x => x.Value == l.Id)
+                                      select l.LeagueName;
+
             List<Match> matches = new List<Match>();
 
             foreach (var league in favoriteTeamLeagues)
@@ -713,16 +957,23 @@ namespace FinalProject.Controllers
                 {
                     matches.AddRange(FootballDAL.GetMatchesList(leagueOut, "2020-21").Where(x => x.team1 == team.TeamName || x.team2 == team.TeamName));
                 }
-            }            
+            }
             return View(matches);
         }
+
+
 
         public string FindUser()
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var userId = claim.Value;
+            string userId = "";
+            if (claim != null)
+            {
+                userId = claim.Value;
+            }
             return userId;
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

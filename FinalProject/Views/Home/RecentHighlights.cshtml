@@ -4,12 +4,27 @@
     ViewData["Title"] = "RecentHighlights";
 }
 
+@*navigation*@
+@{
+    int pageNum = ViewBag.pageCount;
+    int numOfpages = ViewBag.listCount;
+
+    int p = pageNum >= 2 ? pageNum - 1 : pageNum;
+    int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
+    int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
+
+    int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
+    int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
+    int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
+}
+
 <h1 style="text-align:center">Recent Football Highlights</h1>
 
 <form asp-controller="Home" asp-action="SearchHighlights" style="text-align: right;" method="get">
-    <input type="text" name="searchFor" value="Search" />
+    <input type="text" name="searchFor" placeholder="Search" required />
     <input type="submit" />
 </form>
+<br />
 
 <table class="table">
     <thead>
@@ -17,7 +32,7 @@
             <th>
                 Match
             </th>
-            <th style="padding: 2px 200px 2px 200px;">
+            <th>
                 Highlight Video
             </th>
         </tr>
@@ -36,7 +51,65 @@
                 <td>
                     @foreach (var v in item.videos)
                     {
-                        @Html.Raw(v.embed)
+                        <div class="rTable">
+                            <div class="rTableRow">
+
+                                @if (v.VideoComments != null)
+                                {
+                                    <div class="rTableCell">
+                                        @foreach (var comment in v.VideoComments)
+                                        {
+
+                                            <div id="commentHeader" style="text-align:left; float:left">
+                                                <b>@Html.DisplayFor(modelItem => comment.User.UserName)</b> -
+                                                @Html.DisplayFor(modelItem => comment.DateCreated)
+                                            </div>
+                                            <br />
+                                            <div id="commentBody" style="text-align:left; float:left">
+                                                @Html.DisplayFor(modelItem => comment.VideoComment)
+                                                @if(comment.UserId == ViewData["userId"].ToString())
+                                                {
+                                                    <form asp-controller="Home" asp-action="EditComment" method="post">
+                                                        <input type="hidden" name="commentID" value="@comment.Id" />
+                                                        <input type="submit" value="Edit" />
+                                                    </form>
+                                                }
+                                            </div>
+                                            <br />
+
+                                        }
+                                        <div id="commentForm" style="position: relative; bottom: 0;">
+                                            <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
+                                                <input type="text" name="comment" placeholder="leave a remark" />
+                                                <input type="hidden" name="page" value="@pageNum" />
+                                                <input type="hidden" name="videoEmbed" value="@v.embed" />
+                                                <input type="hidden" name="videoTitle" value="@item.title" />
+                                                <input type="hidden" name="videoDate" value="@item.date" />
+                                                <input type="submit" />
+                                            </form>
+
+                                        </div>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="rTableCell">
+                                        <div id="commentForm" style="position: relative; bottom: 0;">
+                                            <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
+                                                <input type="text" name="comment" placeholder="leave a remark" />
+                                                <input type="hidden" name="page" value="@pageNum" />
+                                                <input type="hidden" name="videoEmbed" value="@v.embed" />
+                                                <input type="hidden" name="videoTitle" value="@item.title" />
+                                                <input type="hidden" name="videoDate" value="@item.date" />
+                                                <input type="submit" />
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                                @Html.Raw(v.embed)
+                            </div>
+                        </div>
                     }
                 </td>
             </tr>
@@ -44,43 +117,35 @@
     </tbody>
 </table>
 
-@*navigation*@
-@{
-    int pageNum = ViewBag.pageCount;
-    int numOfpages = ViewBag.listCount;
-
-    int p = pageNum >= 2 ? pageNum - 1 : pageNum;
-    int pr = pageNum >= 3 ? pageNum - 2 : pageNum;
-    int previous = pageNum >= 2 ? pageNum - 1 : pageNum;
-
-    int n = pageNum < numOfpages ? pageNum + 1 : pageNum;
-    int ne = pageNum < (numOfpages - 1) ? pageNum + 2 : pageNum;
-    int next = pageNum < numOfpages ? pageNum + 1 : pageNum;
-}
-
 <form asp-controller="Home" asp-action="RecentHighlights" style="text-align: center;" method="get">
     @{
         if (pageNum >= 2)
         {
             <button class="btn-outline-info" name="page" type="submit" value="@previous">Previous</button>
 
-            @if (pageNum != pr)
-            {
-                <input class="btn-outline-info" name="page" type="submit" value="@pr" />
+                    @if (pageNum != pr)
+                    {
+                        <input class="btn-light" name="page" type="submit" value="@pr" />
+                    }
+                    <input class="btn-light" name="page" type="submit" value="@p" />
+                }
             }
-            <input class="btn-outline-info" name="page" type="submit" value="@p" />
-        }
-    }
-    <input class="btn-info" name="page" type="submit" value="@pageNum" />
-    @{
-        if (pageNum < numOfpages)
-        {
-            <input class="btn-outline-info" name="page" type="submit" value="@n" />
-            @if (pageNum != ne)
-            {
-                <input class="btn-outline-info" name="page" type="submit" value="@ne" />
+            <input class="btn-dark" name="page" type="submit" value="@pageNum" />
+            @{
+                if (pageNum < numOfpages)
+                {
+                    <input class="btn-light" name="page" type="submit" value="@n" />
+                    @if (pageNum != ne)
+                    {
+                        <input class="btn-light" name="page" type="submit" value="@ne" />
+                    }
+                    <button class="btn-light" name="page" type="submit" value="@next">Next</button>
+                }
             }
-            <button class="btn-outline-info" name="page" type="submit" value="@next">Next</button>
-        }
+        </form>
     }
-</form>
+    else
+    {
+        <h3>No results were found. Please check again later.</h3>
+    }
+}

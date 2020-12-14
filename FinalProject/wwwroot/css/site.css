@@ -61,11 +61,76 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  background-image: url("/img/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: Tahoma;
+  color: silver;
 }
+
+.bg-custom {
+    background-color: #4d64b2;
+}
+
+
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+.rTable {
+    display: table;
+}
+
+.rTableRow {
+    display: table-row;
+}
+
+
+.rTableHeading {
+    display: table-header-group;
+}
+
+.rTableBody {
+    display: table-row-group;
+}
+
+.rTableFoot {
+    display: table-footer-group;
+}
+
+.rTableCell, .rTableHead {
+    padding: .5em;
+    display: table-cell;
+    position: relative;
+    background-color: darkslategrey;
+}
+
+    .rTableCell #commentHeader{
+    background-color: darkslategrey;
+    }
+
+    .rTableCell #commentBody {
+        background-color: darkolivegreen;
+    }
+    .rTableCell #commentForm {
+        background-color: darkslategrey;
+        padding-top: 2em;
+    }
+
+    .rTableRow div {
+        display: table-cell;
+    }
+
+#indexContainer {
+    min-height: 800px;
+}
+
+#indexForm {
+    border-radius: 25px;
+    background-color: rgba(12, 12, 12, 0.8);
+    padding: 50px;
 }
