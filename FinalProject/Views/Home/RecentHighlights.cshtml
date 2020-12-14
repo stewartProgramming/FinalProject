@@ -66,6 +66,13 @@
                                             <br />
                                             <div id="commentBody" style="text-align:left; float:left">
                                                 @Html.DisplayFor(modelItem => comment.VideoComment)
+                                                @if(comment.UserId == ViewData["userId"].ToString())
+                                                {
+                                                    <form asp-controller="Home" asp-action="EditComment" method="post">
+                                                        <input type="hidden" name="commentID" value="@comment.Id" />
+                                                        <input type="submit" value="Edit" />
+                                                    </form>
+                                                }
                                             </div>
                                             <br />
 

@@ -78,6 +78,7 @@ namespace FinalProject.Controllers
                     }
                 }
             }
+            ViewData["userId"] = FindUser();
 
             return View(currentList);
         }
@@ -107,6 +108,21 @@ namespace FinalProject.Controllers
             return RedirectToAction("RecentHighlights", new { page = page });
         }
 
+        [HttpPost]
+        public IActionResult EditComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            return View(vc);
+        }
+        [HttpPost]
+        public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
+        {
+            VideoComments vc = _db.VideoComments.Find(Id);
+            vc.VideoComment = VideoComment;
+            _db.VideoComments.Update(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<Highlight> highlights = FootballDAL.GetHighlights();
