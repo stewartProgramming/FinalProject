@@ -32,10 +32,14 @@
                 @Html.DisplayFor(modelItem => item.date)
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team1) @Html.DisplayFor(modelItem => item.score.ft[0])
+                @Html.DisplayFor(modelItem => item.team1)
+                <br />
+                [@Html.DisplayFor(modelItem => item.score.ft[0])]
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.team2) @Html.DisplayFor(modelItem => item.score.ft[1])
+                @Html.DisplayFor(modelItem => item.team2)
+                <br />
+                [@Html.DisplayFor(modelItem => item.score.ft[1])]
             </td>
             <td style="text-align:center">
                 @if (item.score == null)
