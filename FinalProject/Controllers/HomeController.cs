@@ -609,7 +609,7 @@ namespace FinalProject.Controllers
             }
             else if (qIndex == 1)
             {
-                FootballStandings standings = FootballDAL.GetStandings(league, season);
+                FootballStandings standings = _footballDAL.GetStandings(league, season);
                 var teams = standings.response[0].league.standings[0];
 
                 string correctAnswer = teams[0].team.name;
@@ -645,7 +645,7 @@ namespace FinalProject.Controllers
             }
             else if (qIndex == 2)
             {
-                FootballStandings standings = FootballDAL.GetStandings(league, season);
+                FootballStandings standings = _footballDAL.GetStandings(league, season);
                 var teams = standings.response[0].league.standings[0];
 
                 string correctAnswer = teams.Last().team.name;
@@ -745,7 +745,7 @@ namespace FinalProject.Controllers
             quiz2VM.Question = question;
 
             return View(quiz2VM);
-
+        }
         public IActionResult AddFavoriteTeam()
         {
             CascadingModel cm = new CascadingModel();
