@@ -114,6 +114,14 @@ namespace FinalProject.Controllers
             VideoComments vc = _db.VideoComments.Find(commentID);
             return View(vc);
         }
+
+        public IActionResult DeleteComment(int commentID)
+        {
+            VideoComments vc = _db.VideoComments.Find(commentID);
+            _db.VideoComments.Remove(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights");
+        }
         [HttpPost]
         public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
         {
@@ -804,7 +812,7 @@ namespace FinalProject.Controllers
             string userId = "";
             if (claim != null)
             {
-            userId = claim.Value;
+                userId = claim.Value;
             }
             return userId;
         }

@@ -10,15 +10,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="SubmitComment" method="post"> 
+        <form asp-action="SubmitComment" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <input type="hidden" asp-for="VideoId" class="form-control" asp-items="@Model.VideoId"></input>
+                <input type="hidden" asp-for="VideoId" class="form-control" asp-items="@Model.VideoId">
                 <span asp-validation-for="VideoId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="hidden" asp-for="UserId" class="form-control" asp-items="@ViewData["userId"]"></select>
+                <input type="hidden" asp-for="UserId" class="form-control" asp-items="@ViewData["userId"]">
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,6 +34,7 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+        <a asp-controller="Home" asp-action="DeleteComment" asp-route-commentID="@Model.Id" class="btn btn-danger align">Remove Comment</a>
     </div>
 </div>
 
