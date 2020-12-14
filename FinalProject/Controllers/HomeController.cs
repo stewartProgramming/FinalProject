@@ -801,7 +801,11 @@ namespace FinalProject.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var userId = claim.Value;
+            string userId = "";
+            if (claim != null)
+            {
+            userId = claim.Value;
+            }
             return userId;
         }
 
