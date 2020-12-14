@@ -746,6 +746,9 @@ namespace FinalProject.Controllers
 
             return View(quiz2VM);
         }
+
+
+
         public IActionResult AddFavoriteTeam()
         {
             CascadingModel cm = new CascadingModel();
@@ -839,6 +842,7 @@ namespace FinalProject.Controllers
             var favoriteTeamLeagues = from l in _db.Leagues
                                       where LeagueID.Any(x => x.Value == l.Id)
                                       select l.LeagueName;
+
             List<Match> matches = new List<Match>();
 
             foreach (var league in favoriteTeamLeagues)
