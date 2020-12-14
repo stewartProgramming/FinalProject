@@ -11,16 +11,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Team1)
+                First Team
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Team2)
+                Second Team
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Team1Score)
+                Score for First Team
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Team2Score)
+                Score for Second Team
             </th>
         </tr>
     </thead>
@@ -34,7 +34,7 @@
                     difference = Model.Team1Score - Model.Team2Score;
                     @if (difference > 2)
                     {
-                        <h4>Projected Winner</h4>
+                        <h3>Projected Winner</h3>
                     }
                 }
             </td>
