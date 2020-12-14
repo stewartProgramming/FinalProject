@@ -92,9 +92,23 @@ body {
 }
 
 .rTableCell, .rTableHead {
+    padding: .5em;
     display: table-cell;
     position: relative;
+    background-color: darkslategrey;
 }
+
+    .rTableCell #commentHeader{
+    background-color: darkslategrey;
+    }
+
+    .rTableCell #commentBody {
+        background-color: darkolivegreen;
+    }
+    .rTableCell #commentForm {
+        background-color: darkslategrey;
+        padding-top: 2em;
+    }
 
     .rTableRow div {
         display: table-cell;
