@@ -59,17 +59,18 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-  background-image: url("/img/background.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  font-family: Tahoma;
-  color: silver;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background-color: #4d64b2;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: Tahoma;
+    color: silver;
 }
 
 .bg-custom {
-    background-color: #4d64b2;
+    background-image: url(../img/background.jpg) !important;
+    /*background-image: url('https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');*/
 }
 
 
@@ -88,5 +89,8 @@ body {
 #indexForm {
     border-radius: 25px;
     background-color: rgba(12, 12, 12, 0.8);
-    padding: 50px;
+    padding: 3em;
+    min-height: 25%;
+    margin-top: 20em;
+    width: 50%;
 }

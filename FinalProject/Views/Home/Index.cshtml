@@ -1,22 +1,30 @@
+<body class="bg-custom">
+    <div id="indexForm" class="container-fluid d-flex justify-content-center align-items-center h-100">
+        <form style="text-align: center;">
+            <div class="form-group h-100">
+                <label for="league">Select league</label>
+                <select name="league" id="league">
+                    <option value="" disabled selected>Select league</option>
+                    <option value="en.1">England</option>
+                    <option value="es.1">Spain</option>
+                    <option value="de.1">Germany</option>
+                    <option value="it.1">Italy</option>
+                    <option value="fr.1">France</option>
+                </select>
+                <label for="season">Select season</label>
+                <select name="season" id="season">
+                    <option value="" disabled selected>Select season</option>
+                    <option value="2020-21">2020/2021</option>
+                    <option value="2019-20">2019/2020</option>
+                </select>
+                <br />
 
-﻿<form style="text-align: center;">
+                <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
+                <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
+                <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
+                <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+            </div>
 
-    <label for="league">Select league</label>
-    <select name="league" id="league">
-        <option value="en.1">England</option>
-        <option value="es.1">Spain</option>
-        <option value="de.1">Germany</option>
-        <option value="it.1">Italy</option>
-        <option value="fr.1">France</option>
-    </select>
-    <label for="season">Select season</label>
-    <select name="season" id="season">
-        <option value="2020-21">2020/2021</option>
-        <option value="2019-20">2019/2020</option>
-    </select>
-    <br />
-
-    <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
-    <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
-    <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
-    <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+        </form>
+    </div>﻿
+</body>
