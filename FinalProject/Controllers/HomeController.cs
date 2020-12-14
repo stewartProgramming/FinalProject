@@ -40,7 +40,7 @@ namespace FinalProject.Controllers
             //_db.CommunityFavoriteVideos.Where(x => x.EmbedCode == )
 
             List<List<Highlight>> list = _highlightService.GetHighlights();
-            if (list.Any)
+            if (list.Any())
             {
                 if (page == null)
                 {
