@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalProject.Models
 {
@@ -16,7 +17,7 @@ namespace FinalProject.Models
             UserFavoriteVideos = new HashSet<UserFavoriteVideos>();
             VideoComments = new HashSet<VideoComments>();
         }
-
+        [Key]
         public string Id { get; set; }
         public string UserName { get; set; }
         public string NormalizedUserName { get; set; }

@@ -48,7 +48,7 @@ namespace FinalProject.Models
     {
         public string title { get; set; }
         public string embed { get; set; }
-        public VideoComments VideoComments { get; set; }
+        public List<VideoComments> VideoComments { get; set; }
     }
 
 }

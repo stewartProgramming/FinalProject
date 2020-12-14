@@ -47,21 +47,64 @@ namespace FinalProject.Controllers
             ViewBag.listCount = list.Count;
 
             // attaching comments to videos
-            string currentEmbed;
+            string currentEmbedForView;
             var videoComments = _db.VideoComments.ToList();
-
+            List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+            foreach (var vc in videoComments)
+            {
+                matchingVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vc.VideoId));
+            }
+            // dictionary videoID: embed
+            // 
 
             var currentList = list[(int)page - 1];
             foreach (var match in currentList)
             {
                 foreach (var video in match.videos)
                 {
-                    currentEmbed = video.embed;
-                    video.VideoComments = videoComments[0];
+                    currentEmbedForView = video.embed;
+                    foreach (var v in matchingVideos.Distinct())
+                    {
+                        if(currentEmbedForView == v.EmbedCode)
+                        {
+                            //video.VideoComments = (VideoComments) videoComments.Where(x => x.VideoId == v.Id).FirstOrDefault();
+                            List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+                            foreach (var item in vc)
+                            {
+                                item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+                            }
+                            video.VideoComments = vc;
+                        }
+                    }
                 }
             }
 
             return View(currentList);
+        }
+        [HttpPost]
+        public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                   where v.EmbedCode == videoEmbed
+                                   select v.Id).FirstOrDefault();
+            if(communityFavoriteVideoID == 0)
+            {
+                CommunityFavoriteVideos fv = new CommunityFavoriteVideos();
+                fv.EmbedCode = videoEmbed;
+                fv.VideoDate = videoDate;
+                fv.VideoTitle = videoTitle;
+                _db.CommunityFavoriteVideos.Add(fv);
+                _db.SaveChanges();
+            }            
+
+            VideoComments vc = new VideoComments();
+            vc.VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id;
+            vc.DateCreated = DateTime.Now;
+            vc.UserId = FindUser();
+            vc.VideoComment = comment;
+            _db.VideoComments.Add(vc);
+            _db.SaveChanges();
+            return RedirectToAction("RecentHighlights", new { page = page });
         }
 
         public IActionResult SearchHighlights(string searchFor, int? page)
@@ -623,7 +666,7 @@ namespace FinalProject.Controllers
                 });
             }
             return View(cm);
-        }        
+        }
 
         [HttpPost]
         public IActionResult AddFavoriteTeam(int? LeagueID, int? TeamID)
