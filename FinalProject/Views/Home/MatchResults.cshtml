@@ -18,33 +18,33 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
+    <tr>
+        <th style="text-align:center">
+            <form asp-controller="Home" asp-action="LeagueStandings">
+                <input type="hidden" value="@ViewBag.League" name="league"/>
+                <input type="hidden" value="@ViewBag.Season" name="season"/>
+                <input type="submit" value="Standings"/>
+            </form>
+        </th>
+        <th style="text-align: center">
+            Date
+        </th>
+        <th style="text-align:center">
+            Home
+        </th>
+        <th style="text-align:center">
+            Away
+        </th>
+        @if (oldSeason == false)
+        {
             <th style="text-align:center">
-                <form asp-controller="Home" asp-action="LeagueStandings">
-                    <input type="hidden" value="@ViewBag.League" name="league"/>
-                    <input type="hidden" value="@ViewBag.Season" name="season"/>
-                    <input type="submit" value="Standings"/>
-                </form>
+                Probability
             </th>
-            <th style="text-align: center">
-                Date
-            </th>
-            <th style="text-align:center">
-                Home
-            </th>
-            <th style="text-align:center">
-                Away
-            </th>
-            @if (oldSeason == false)
-            {
-                <th style="text-align:center">
-                    Probability
-                </th>
-            }
-        </tr>
+        }
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.matches) {
+    @foreach (var item in Model.matches) {
         <tr>
             <td style="text-align:center">
                 @Html.DisplayFor(modelItem => item.round) 
@@ -60,7 +60,7 @@
                     }
                     else
                     {
-            <p>@Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]</p>
+                        <p>@Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]</p>
                     }
                 }
             </td>
@@ -72,7 +72,7 @@
                     }
                     else
                     {
-            <p>@Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]</p> 
+                        <p>@Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]</p> 
                     }
                 }
             </td>
@@ -86,8 +86,12 @@
                         <input type="submit" value="Probability" style="align-content:center"/>
                     </form>
                 }
+                else
+                {
+                    <p>Match Finished</p>
+                }
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

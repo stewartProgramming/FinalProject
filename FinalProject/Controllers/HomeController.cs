@@ -188,7 +188,6 @@ namespace FinalProject.Controllers
             FootballMatches clubs = FootballDAL.GetMatches(league, season);
             ViewBag.League = league;
             ViewBag.Season = season;
-
             return View(clubs);
         }
 
