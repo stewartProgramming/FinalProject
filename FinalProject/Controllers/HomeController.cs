@@ -92,30 +92,44 @@ namespace FinalProject.Controllers
             }
             return currentList;
         }
+
         [HttpPost]
         public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
         {
-            int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
-                                   where v.EmbedCode == videoEmbed
-                                   select v.Id).FirstOrDefault();
-            if(communityFavoriteVideoID == 0)
+            if (User.Identity.IsAuthenticated)
             {
-                CommunityFavoriteVideos fv = new CommunityFavoriteVideos();
-                fv.EmbedCode = videoEmbed;
-                fv.VideoDate = videoDate;
-                fv.VideoTitle = videoTitle;
-                _db.CommunityFavoriteVideos.Add(fv);
-                _db.SaveChanges();
-            }            
+                int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                                 where v.EmbedCode == videoEmbed
+                                                 select v.Id).FirstOrDefault();
+                if (communityFavoriteVideoID == 0)
+                {
+                    CommunityFavoriteVideos fv = new CommunityFavoriteVideos
+                    {
+                        EmbedCode = videoEmbed,
+                        VideoDate = videoDate,
+                        VideoTitle = videoTitle
+                    };
+                    _db.CommunityFavoriteVideos.Add(fv);
+                    _db.SaveChanges();
+                }
 
-            VideoComments vc = new VideoComments();
-            vc.VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id;
-            vc.DateCreated = DateTime.Now;
-            vc.UserId = FindUser();
-            vc.VideoComment = comment;
-            _db.VideoComments.Add(vc);
-            _db.SaveChanges();
-            return RedirectToAction("RecentHighlights", new { page = page });
+                VideoComments vc = new VideoComments
+                {
+                    VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
+                    DateCreated = DateTime.Now,
+                    UserId = FindUser(),
+                    VideoComment = comment
+                };
+                _db.VideoComments.Add(vc);
+                _db.SaveChanges();
+
+                return RedirectToAction("RecentHighlights", new { page = page });
+            }
+            else
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
         }
 
         [HttpPost]
@@ -128,39 +142,47 @@ namespace FinalProject.Controllers
         public IActionResult DeleteComment(int commentID)
         {
             VideoComments vc = _db.VideoComments.Find(commentID);
-            _db.VideoComments.Remove(vc);
-            _db.SaveChanges();
-            var highlightCache =_highlightService.GetHighlights();
-            // remove video comment from cache service
-            foreach (var page in highlightCache)
+
+            if (vc.UserId == FindUser())
             {
-                foreach (var match in page)
+                _db.VideoComments.Remove(vc);
+                _db.SaveChanges();
+                var highlightCache =_highlightService.GetHighlights();
+                // remove video comment from cache service
+                foreach (var page in highlightCache)
                 {
-                    foreach (var video in match.videos)
+                    foreach (var match in page)
                     {
-                        if(video.VideoComments != null)
+                        foreach (var video in match.videos)
                         {
-                            for (int i = 0; i < video.VideoComments.Count; i++)
+                            if(video.VideoComments != null)
                             {
-                                if (video.VideoComments[i].Id == commentID)
+                                for (int i = 0; i < video.VideoComments.Count; i++)
                                 {
-                                    video.VideoComments.RemoveAt(i);
+                                    if (video.VideoComments[i].Id == commentID)
+                                    {
+                                        video.VideoComments.RemoveAt(i);
+                                    }
                                 }
-                            }
-                        }                        
+                            }                        
+                        }
                     }
                 }
             }
+            
             return RedirectToAction("RecentHighlights");
         }
 
         [HttpPost]
-        public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
+        public IActionResult SubmitComment(int Id, string VideoComment)
         {
             VideoComments vc = _db.VideoComments.Find(Id);
-            vc.VideoComment = VideoComment;
-            _db.VideoComments.Update(vc);
-            _db.SaveChanges();
+            if(vc.UserId == FindUser())
+            {
+                vc.VideoComment = VideoComment;
+                _db.VideoComments.Update(vc);
+                _db.SaveChanges();
+            }
             return RedirectToAction("RecentHighlights");
         }
         public IActionResult SearchHighlights(string searchFor, int? page)
