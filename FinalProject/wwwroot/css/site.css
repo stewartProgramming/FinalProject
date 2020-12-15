@@ -70,7 +70,6 @@ body {
 
 .bg-custom {
     background-image: url(../img/background.jpg) !important;
-    /*background-image: url('https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');*/
 }
 
 
@@ -93,4 +92,9 @@ body {
     min-height: 25%;
     margin-top: 20em;
     width: 50%;
+}
+
+.standingsSort{
+    justify-content: left;
+    align-content: center;
 }
