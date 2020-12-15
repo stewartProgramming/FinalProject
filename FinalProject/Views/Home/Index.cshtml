@@ -23,6 +23,9 @@
                 <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
                 <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
                 <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+                <p></p>
+                <p>Most Recent Highlight</p>
+                @Html.Raw(ViewBag.FirstVideo)
             </div>
         </form>
     </div>﻿
