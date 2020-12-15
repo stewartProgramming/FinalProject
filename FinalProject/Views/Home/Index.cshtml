@@ -2,8 +2,9 @@
     <div id="indexForm" class="container-fluid d-flex justify-content-center align-items-center h-100">
         <form style="text-align: center;">
             <div class="form-group h-100">
+                <h5><i>Your stats, your way</i></h5> <hr style="background-color: orange;" /><br />
                 <label for="league">Select league</label>
-                <select name="league" id="league">
+                <select name="league" id="league" required>
                     <option value="" disabled selected>League</option>
                     <option value="en.1">England</option>
                     <option value="es.1">Spain</option>
@@ -12,7 +13,7 @@
                     <option value="fr.1">France</option>
                 </select>
                 <label for="season">Select season</label>
-                <select name="season" id="season">
+                <select name="season" id="season" required>
                     <option value="" disabled selected>Season</option>
                     <option value="2020-21">2020/2021</option>
                     <option value="2019-20">2019/2020</option>
