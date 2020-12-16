@@ -87,7 +87,7 @@ body {
 }
 
 .rTableRow {
-    display: table-row;
+    display: inline-flex;
 }
 
 
@@ -110,22 +110,36 @@ body {
     background-color: darkslategrey;
 }
 
-    .rTableCell #commentHeader{
-    background-color: darkslategrey;
+    .rTableCell #commentHeader {
+        background-color: darkslategrey;
+        display: inline-block;
+        vertical-align: top;
+        width: -webkit-fill-available;
     }
 
     .rTableCell #commentBody {
         background-color: darkolivegreen;
+        display: inline-block;
+        vertical-align: top;
+        width: -webkit-fill-available;
     }
     .rTableCell #commentForm {
         background-color: darkslategrey;
         padding-top: 2em;
+        width: -webkit-fill-available;
     }
 
-    .rTableRow div {
-        display: table-cell;
+.rTableCellVideo div {
+    padding: 20em;
+    position: relative;
+    display: inline-block;
+}
 
-    }
+#commentContainer {
+    display: block;
+    vertical-align: top;
+    margin: auto;
+}
 
 #indexContainer {
     min-height: 800px;
@@ -138,6 +152,12 @@ body {
     min-height: 25%;
     margin-top: 20em;
     width: 50%;
+}
+
+#BtnAddFavoriteVideo{
+    text-align:end;
+    margin-bottom:1em;
+    float:right;
 }
 
 td {
