@@ -4,41 +4,49 @@
     ViewData["Title"] = "Quiz";
 }
 
-<h1>Test Your Football Knowledge</h1>
+@{
+    TempData["Team1"] = Model.team1;
+    TempData["Team2"] = Model.team2;
+    }
 
-<hr />
 
-<h2>Match-Up</h2>
+<div class="align-content-center" style="text-align: center;">
+    <h1>Test Your Football Knowledge</h1>
 
-<br />
+    <hr />
 
-<p>Date of Match: <b>@Model.date</b></p>
-<p><b>@Model.team1</b> vs. <b>@Model.team2</b></p>
+    <h2>Match-Up</h2>
 
-<p>Which team won? Or was it a draw?</p>
+    <br />
 
-<form asp-action="QuizResult" asp-controller="Home" method="post">
+    <p>Date of Match: <b>@Model.date</b></p>
+    <p><b>@Model.team1</b> vs. <b>@Model.team2</b></p>
 
-    <input type="hidden" name="team1" value="@Model.team1" />
-    <input type="hidden" name="team2" value="@Model.team2" />
-    <input type="hidden" name="date" value="@Model.date" />
-    <input type="hidden" name="index" value="@TempData["MatchIndex"]" />
-    <input type="hidden" name="league" value="@TempData["League"]" />
-    <input type="hidden" name="season" value="@TempData["Season"]" />
+    <p>Which team won? Or was it a draw?</p>
 
-    <label>
-        <input type="radio" name="answer" value="team1" /> @Model.team1 &ensp;
-    </label>
+    <form asp-action="QuizResult" asp-controller="Home" method="post">
 
-    <label>
-        <input type="radio" name="answer" value="team2" /> @Model.team2 &ensp;
-    </label>
+        <input type="hidden" name="team1" value="@Model.team1" />
+        <input type="hidden" name="team2" value="@Model.team2" />
+        <input type="hidden" name="date" value="@Model.date" />
+        <input type="hidden" name="index" value="@TempData["MatchIndex"]" />
+        <input type="hidden" name="league" value="@TempData["League"]" />
+        <input type="hidden" name="season" value="@TempData["Season"]" />
 
-    <label>
-        <input type="radio" name="answer" value="draw" /> Draw
-    </label>
+        <label>
+            <input type="radio" name="answer" value="team1" /> @Model.team1 &ensp;
+        </label>
 
-    <br /><br />
+        <label>
+            <input type="radio" name="answer" value="team2" /> @Model.team2 &ensp;
+        </label>
 
-    <input type="submit" value="Submit answer" />
-</form>
+        <label>
+            <input type="radio" name="answer" value="draw" /> Draw
+        </label>
+
+        <br /><br />
+
+        <input type="submit" value="Submit answer" class="btn btn-dark" />
+    </form>
+</div>

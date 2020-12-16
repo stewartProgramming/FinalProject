@@ -163,9 +163,37 @@ body {
 td {
     color: silver;
 }
-}
+
 
 .standingsSort{
     justify-content: left;
     align-content: center;
+}
+
+.select-items {
+    background-color: #343a40;
+    border: 2px solid black;
+    color: #fff;
+}
+
+.select-fav-teams {
+    background-color: #343a40;
+    border: 2px solid black;
+    color: #fff;
+    width: auto;
+    padding-right: 1.5em;
+    background-position-x: 95%;
+}
+
+select {
+    width: 100px;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 0;
+    border-radius: 5px;
+    height: 34px;
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right #ddd;
+    -webkit-appearance: none;
+    background-position-x: 75px;
 }

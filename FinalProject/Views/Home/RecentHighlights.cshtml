@@ -73,37 +73,38 @@
                                                     {
                                                         <form asp-controller="Home" asp-action="EditComment" method="post">
                                                             <input type="hidden" name="commentID" value="@comment.Id" />
-                                                            <input type="submit" value="Edit" />
+                                                            <input type="submit" class="btn btn-dark" value="Edit" />
                                                         </form>
                                                     }
                                                 </div>
                                                 <br />
+
+                                            }
+                                            <div id="commentForm" style="position: relative; bottom: 0;">
+                                                <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
+                                                    <input type="text" name="comment" placeholder="Leave a remark" required/>
+                                                    <input type="hidden" name="page" value="@pageNum" />
+                                                    <input type="hidden" name="videoEmbed" value="@v.embed" />
+                                                    <input type="hidden" name="videoTitle" value="@item.title" />
+                                                    <input type="hidden" name="videoDate" value="@item.date" />
+                                                    <input type="submit" class="btn btn-dark" value="Submit" />
+                                                </form>
+
                                             </div>
                                         }
-                                        <div id="commentForm" style="position: relative; bottom: 0;">
-                                            <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
-                                                <input type="text" name="comment" placeholder="leave a remark" required />
-                                                <input type="hidden" name="page" value="@pageNum" />
-                                                <input type="hidden" name="videoEmbed" value="@v.embed" />
-                                                <input type="hidden" name="videoTitle" value="@item.title" />
-                                                <input type="hidden" name="videoDate" value="@item.date" />
-                                                <input type="submit" />
-                                            </form>
-                                        </div>
                                     </div>
-
                                 }
                                 else
                                 {
                                     <div class="rTableCell">
                                         <div id="commentForm">
                                             <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
-                                                <input type="text" name="comment" placeholder="leave a remark" required />
+                                                <input type="text" name="comment" placeholder="Leave a remark" required />
                                                 <input type="hidden" name="page" value="@pageNum" />
                                                 <input type="hidden" name="videoEmbed" value="@v.embed" />
                                                 <input type="hidden" name="videoTitle" value="@item.title" />
                                                 <input type="hidden" name="videoDate" value="@item.date" />
-                                                <input type="submit" />
+                                                <input type="submit" class="btn btn-dark" value="Submit" />
                                             </form>
                                         </div>
                                     </div>

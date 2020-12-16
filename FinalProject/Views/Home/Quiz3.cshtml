@@ -22,24 +22,26 @@
     }
 }
 
-<h1>Test Your Football Knowledge</h1>
+<div class="align-content-center" style="text-align: center;">
+    <h1>Test Your Football Knowledge</h1>
 
-<hr />
+    <hr />
 
-<p>@Model.Question</p>
+    <p>@Model.Question</p>
 
-<form asp-action="Quiz3Result" asp-controller="Home" method="post">
+    <form asp-action="Quiz3Result" asp-controller="Home" method="post" style="display: inline; margin-right: 5px;">
 
-    <input type="hidden" name="question" value="@Model.Question" />
-    <input type="hidden" name="correctAnswer" value="@Model.CorrectAnswer" />
+        <input type="hidden" name="question" value="@Model.Question" />
+        <input type="hidden" name="correctAnswer" value="@Model.CorrectAnswer" />
 
-    @foreach (var answer in randomAnswers)
-    {
-        <input type="hidden" name="randomAnswers" value="@answer" />
-        <label>
-            <input type="radio" name="answer" value="@answer" /> @answer &ensp;
-        </label>
-        <br />
-    }
-    <input type="submit" value="Submit Answer" />
-</form>
+        @foreach (var answer in randomAnswers)
+        {
+            <input type="hidden" name="randomAnswers" value="@answer" />
+            <label>
+                <input type="radio" name="answer" value="@answer" /> @answer &ensp;
+            </label>
+            <br />
+        }
+        <input type="submit" value="Submit Answer" class="btn btn-dark" />
+    </form>
+</div>
