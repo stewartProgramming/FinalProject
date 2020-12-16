@@ -89,7 +89,6 @@
                                                     <input type="hidden" name="videoDate" value="@item.date" />
                                                     <input type="submit" class="btn btn-dark" value="Submit" />
                                                 </form>
-
                                             </div>
                                         </div>
                                     }
@@ -109,8 +108,6 @@
                                         </div>
                                     }
 
-                                    @*@Html.Raw(v.embed +
-                                        "<div class=\"rTableRow\"><form asp-controller = \"Home\" asp-action = \"AddFavoriteVideo\" method = \"post\" > <input type=\"hidden\" name=\"videoEmbed\" value=\"@v.embed\" /><input type=\"hidden\" name=\"videoTitle\" value=\"@item.title\" /><input type=\"hidden\" name=\"videoDate\" value=\"@item.date\" /><input type=\"hidden\" name=\"page\" value=\"@pageNum\" /><input type=\"submit\" value=\"Add to Favorites\" /></form></div>")*@
                                     @Html.Raw("<div class=\"rTableCellVideo\">" + v.embed + "</div>")
                                 </div>
 
