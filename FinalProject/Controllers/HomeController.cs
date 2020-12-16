@@ -249,6 +249,16 @@ namespace FinalProject.Controllers
             }
         }
 
+        public IActionResult DeleteFavoriteVideo(int videoID)
+        {
+            UserFavoriteVideos fv = new UserFavoriteVideos();
+            fv = _db.UserFavoriteVideos.Find(videoID, FindUser());
+            _db.UserFavoriteVideos.Remove(fv);
+            _db.SaveChanges();
+
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);

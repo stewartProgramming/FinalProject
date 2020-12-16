@@ -114,7 +114,7 @@
                                 @Html.Raw("<div class=\"rTableCellVideo\">" + v.embed + "</div>")
                             </div>
 
-                                <div class="rTableRow">
+                                <div class="rTableRow" id="BtnAddFavoriteVideo">
                                     <form asp-controller="Home" asp-action="AddFavoriteVideo" method="post">
                                         <input type="hidden" name="videoEmbed" value="@v.embed" />
                                         <input type="hidden" name="videoTitle" value="@item.title" />

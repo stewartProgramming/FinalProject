@@ -4,11 +4,8 @@
     ViewData["Title"] = "FavoriteHighlights";
 }
 
-<h1>FavoriteHighlights</h1>
+<h1>Favorite Highlights</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -16,6 +13,7 @@
                 Match
             </th>
             <th>
+                Comments
             </th>
             <th>
                 Highlight Video
@@ -75,7 +73,7 @@
                 @Html.Raw("<div class=\"rTableCellVideo\">" + item.EmbedCode + "</div>")
             </td>
             <td>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="DeleteFavoriteVideo" asp-route-videoID="@item.Id">Delete</a>
             </td>
         </tr>
 }
