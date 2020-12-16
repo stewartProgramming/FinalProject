@@ -1,0 +1,83 @@
+﻿@model IEnumerable<FinalProject.Models.CommunityFavoriteVideos>
+
+@{
+    ViewData["Title"] = "FavoriteHighlights";
+}
+
+<h1>FavoriteHighlights</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Match
+            </th>
+            <th>
+            </th>
+            <th>
+                Highlight Video
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.VideoTitle)
+                @Html.DisplayFor(modelItem => item.VideoDate)
+            </td>
+            <td>
+                @if (item.VideoComments != null)
+                {
+                    <div class="rTable">
+                        <div class="rTableRow" style="display:inline-block">
+                            @foreach (var comment in item.VideoComments)
+                            {
+                                <div class="rTableCell" id="commentContainer">
+                                    <div id="commentHeader" style="text-align:left; float:left">
+                                        <b>@Html.DisplayFor(modelItem => comment.User.UserName)</b> -
+                                        @Html.DisplayFor(modelItem => comment.DateCreated)
+                                    </div>
+                                    <br />
+                                    <div id="commentBody" style="text-align:left">
+                                        @Html.DisplayFor(modelItem => comment.VideoComment)
+                                        @if (comment.UserId == ViewData["userId"].ToString())
+                                        {
+                                            <form asp-controller="Home" asp-action="EditComment" method="post">
+                                                <input type="hidden" name="commentID" value="@comment.Id" />
+                                                <input type="submit" value="Edit" />
+                                            </form>
+                                        }
+                                    </div>
+                                    <br />
+                                </div>
+                            }
+                        <div class="rTableCell">
+                            <div id="commentForm" style="position: relative; bottom: 0;">
+                                <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
+                                    <input type="text" name="comment" placeholder="leave a remark" required />
+                                    <input type="hidden" name="videoEmbed" value="@item.EmbedCode" />
+                                    <input type="hidden" name="videoTitle" value="@item.VideoTitle" />
+                                    <input type="hidden" name="videoDate" value="@item.VideoDate" />
+                                    <input type="submit" />
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                }
+            </td>
+            <td>
+                @Html.Raw("<div class=\"rTableCellVideo\">" + item.EmbedCode + "</div>")
+            </td>
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

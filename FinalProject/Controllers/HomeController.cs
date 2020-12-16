@@ -92,9 +92,35 @@ namespace FinalProject.Controllers
             }
             return currentList;
         }
+        public List<CommunityFavoriteVideos> AttachCommentsToCommunityFavoriteVideos (List<CommunityFavoriteVideos> currentList)
+        {
+            string currentEmbedForView;
+            var videoComments = _db.VideoComments.ToList();
+            List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+            var users = _db.AspNetUsers.ToList();
+            // retrieving videos from FavoriteVideos table that has a comment
+            
+            //foreach (var match in currentList)
+            //{
+            //        currentEmbedForView = match.;
+            //        foreach (var v in matchingVideos.Distinct())
+            //        {
+            //            if (currentEmbedForView == v.EmbedCode)
+            //            {
+            //                List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+            //                foreach (var item in vc)
+            //                {
+            //                    item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+            //                }
+            //                video.VideoComments = vc;
+            //            }
+            //        }
+            //}
+            return currentList;
+        }
 
         [HttpPost]
-        public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        public IActionResult CommentHighlightVideo(string comment, string videoEmbed, string videoTitle, DateTime videoDate)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -123,7 +149,7 @@ namespace FinalProject.Controllers
                 _db.VideoComments.Add(vc);
                 _db.SaveChanges();
 
-                return RedirectToAction("RecentHighlights", new { page = page });
+                return Redirect(Request.Headers["Referer"].ToString());
             }
             else
             {
@@ -169,8 +195,8 @@ namespace FinalProject.Controllers
                     }
                 }
             }
-            
-            return RedirectToAction("RecentHighlights");
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         [HttpPost]
@@ -183,8 +209,46 @@ namespace FinalProject.Controllers
                 _db.VideoComments.Update(vc);
                 _db.SaveChanges();
             }
-            return RedirectToAction("RecentHighlights");
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+
+        [HttpPost]
+        public IActionResult AddFavoriteVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                                 where v.EmbedCode == videoEmbed
+                                                 select v.Id).FirstOrDefault();
+                if (communityFavoriteVideoID == 0)
+                {
+                    CommunityFavoriteVideos cfv = new CommunityFavoriteVideos
+                    {
+                        EmbedCode = videoEmbed,
+                        VideoDate = videoDate,
+                        VideoTitle = videoTitle
+                    };
+                    _db.CommunityFavoriteVideos.Add(cfv);
+                    _db.SaveChanges();
+                }
+
+                UserFavoriteVideos fv = new UserFavoriteVideos
+                {
+                    VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
+                    UserId = FindUser()
+                };
+                _db.UserFavoriteVideos.Add(fv);
+                _db.SaveChanges();
+
+                return RedirectToAction("RecentHighlights", new { page = page });
+            }
+            else
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+        }
+
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
@@ -212,6 +276,21 @@ namespace FinalProject.Controllers
             }
             return RedirectToAction("Index");
         }
+        
+        public IActionResult FavoriteHighlights()
+        {
+            string currentUser = FindUser();
+            var favVideoIDs = _db.UserFavoriteVideos.Where(x => x.UserId == currentUser).ToList();
+            List<CommunityFavoriteVideos> favVideos = new List<CommunityFavoriteVideos>();
+            foreach (var vid in favVideoIDs)
+            {
+                favVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vid.VideoId));
+            }
+            favVideos = AttachCommentsToCommunityFavoriteVideos(favVideos);
+            ViewData["userId"] = FindUser();
+            return View(favVideos);
+        }
+
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {
