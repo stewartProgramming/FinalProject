@@ -4,36 +4,39 @@
     ViewData["Title"] = "Quiz";
 }
 
-<h1>Test Your Football Knowledge</h1>
+<div class="align-content-center" style="text-align: center;">
+    <h1>Test Your Football Knowledge</h1>
 
-<hr />
+    <hr />
 
-<p>@Model.Question</p>
+    <p>@Model.Question</p>
 
-@foreach (var answer in Model.RandomAnswers)
-{
-    <form>
-        <label>
-            @if (answer == Model.Answer)
-            {
-                <input type="radio" checked disabled name="@answer" value="@answer.ToString();" /> @answer
-            }
-            else
-            {
-                <input type="radio" disabled name="@answer" value="@answer.ToString();" /> @answer
-            }
-        </label>
-        <br />
-    </form>
-}
+    @foreach (var answer in Model.RandomAnswers)
+    {
+        <form>
+            <label>
+                @if (answer == Model.Answer)
+                {
+                    <input type="radio" checked disabled name="@answer" value="@answer.ToString();" /> @answer
+                }
+                else
+                {
+                    <input type="radio" disabled name="@answer" value="@answer.ToString();" /> @answer
+                }
+            </label>
+            <br />
+        </form>
+    }
 
-@if (Model.Answer == Model.CorrectAnswer)
-{
-    <h2 style="color: limegreen">Congratulations! You really know your football trivia.</h2>
-}
-else
-{
-    <h2 style="color:red">Sorry, you were incorrect. The correct answer was <b>@Model.CorrectAnswer</b>.<br />Better luck next time.</h2>
-}
-<br />
-<p>Return to the <a href="../Home/Index">main page</a> if you would like to try again.</p>
+    @if (Model.Answer == Model.CorrectAnswer)
+    {
+        <h2 style="color: limegreen">Congratulations! You really know your football trivia.</h2>
+    }
+    else
+    {
+        <h2 style="color:red">Sorry, you were incorrect. The correct answer was <b>@Model.CorrectAnswer</b>.<br />Better luck next time.</h2>
+    }
+    <br />
+    <p>Would you like to try again?</p>
+    <a href="../Home/Index" class="btn btn-dark">Return</a>
+</div>
