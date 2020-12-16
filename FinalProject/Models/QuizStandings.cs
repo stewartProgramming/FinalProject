@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalProject.Models
 {
     public partial class QuizStandings
     {
-        public int Id { get; set; }
+        [Key]
         public string UserId { get; set; }
         public int QuizAttempts { get; set; }
         public int CorrectAnswers { get; set; }

@@ -926,6 +926,10 @@ namespace FinalProject.Controllers
             FootballMatches matches = FootballDAL.GetMatches(league, season);
             Match match = matches.matches[index];
 
+            QuizStandings qs = GetQuizStandings();
+            // increment quiz attempts by 1
+            qs.QuizAttempts++;
+
             var winner = "";
 
             if (match.score.ft[0] > match.score.ft[1])
@@ -944,11 +948,16 @@ namespace FinalProject.Controllers
             if (answer == winner)
             {
                 ViewBag.Result = "Congratulations! You really know your football trivia.";
+                // increment correct answers in QuizStandings
+                qs.CorrectAnswers++;
             }
             else
             {
                 ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
             }
+            // update database QuizStandings
+            _db.QuizStandings.Update(qs);
+            _db.SaveChanges();
             return View(match);
         }
 
@@ -972,6 +981,27 @@ namespace FinalProject.Controllers
             quiz2VM.Question = question;
 
             return View(quiz2VM);
+        }
+
+        public QuizStandings GetQuizStandings()
+        {
+            string currentUser = FindUser();
+            QuizStandings currentStanding = _db.QuizStandings.Find(currentUser);
+            // adds user to QuizStandings table if user does not exist
+            if(currentStanding == null)
+            {
+                QuizStandings newQS = new QuizStandings
+                {
+                    UserId = currentUser,
+                    QuizAttempts = 0,
+                    CorrectAnswers = 0
+                };
+                return newQS;
+            }
+            else
+            {
+                return currentStanding;
+            }            
         }
 
         public IActionResult AddFavoriteTeam()
