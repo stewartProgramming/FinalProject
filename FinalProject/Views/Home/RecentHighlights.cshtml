@@ -52,27 +52,26 @@
                         @Html.DisplayFor(modelItem => item.date)
                     </td>
                     <td>
-                        @foreach (var v in item.videos)
-                        {
-                            <div class="rTable">
-                                <div class="rTableRow">
-
-                                    @if (v.VideoComments != null)
-                                    {
-                                        <div class="rTableCell">
-                                            @foreach (var comment in v.VideoComments)
-                                            {
-
+                        <div class="rTable">
+                            @foreach (var v in item.videos)
+                            {
+                            <div class="rTableRow">
+                                @if (v.VideoComments != null)
+                                {
+                                    <div class="rTableCell">
+                                        @foreach (var comment in v.VideoComments)
+                                        {
+                                            <div id="commentContainer">
                                                 <div id="commentHeader" style="text-align:left; float:left">
                                                     <b>@Html.DisplayFor(modelItem => comment.User.UserName)</b> -
                                                     @Html.DisplayFor(modelItem => comment.DateCreated)
                                                 </div>
                                                 <br />
-                                                <div id="commentBody" style="text-align:left; float:left">
+                                                <div id="commentBody" style="text-align:left">
                                                     @Html.DisplayFor(modelItem => comment.VideoComment)
                                                     @if (comment.UserId == ViewData["userId"].ToString())
                                                     {
-                                                        <form asp-controller="Home" asp-action="EditComment" method="post" >
+                                                        <form asp-controller="Home" asp-action="EditComment" method="post">
                                                             <input type="hidden" name="commentID" value="@comment.Id" />
                                                             <input type="submit" class="btn btn-dark" value="Edit" />
                                                         </form>
@@ -92,28 +91,41 @@
                                                 </form>
 
                                             </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="rTableCell">
+                                        <div id="commentForm">
+                                            <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
+                                                <input type="text" name="comment" placeholder="Leave a remark" required />
+                                                <input type="hidden" name="page" value="@pageNum" />
+                                                <input type="hidden" name="videoEmbed" value="@v.embed" />
+                                                <input type="hidden" name="videoTitle" value="@item.title" />
+                                                <input type="hidden" name="videoDate" value="@item.date" />
+                                                <input type="submit" class="btn btn-dark" value="Submit" />
+                                            </form>
                                         </div>
+                                    </div>
+                                }
 
-                                    }
-                                    else
-                                    {
-                                        <div class="rTableCell">
-                                            <div id="commentForm" style="position: relative; bottom: 0;">
-                                                <form asp-controller="Home" asp-action="CommentHighlightVideo" method="post">
-                                                    <input type="text" name="comment" placeholder="Leave a remark" required/>
-                                                    <input type="hidden" name="page" value="@pageNum" />
-                                                    <input type="hidden" name="videoEmbed" value="@v.embed" />
-                                                    <input type="hidden" name="videoTitle" value="@item.title" />
-                                                    <input type="hidden" name="videoDate" value="@item.date" />
-                                                    <input type="submit" class="btn btn-dark" value="Submit"/>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    }
-                                    @Html.Raw(v.embed)
-                                </div>
+                                @*@Html.Raw(v.embed +
+        "<div class=\"rTableRow\"><form asp-controller = \"Home\" asp-action = \"AddFavoriteVideo\" method = \"post\" > <input type=\"hidden\" name=\"videoEmbed\" value=\"@v.embed\" /><input type=\"hidden\" name=\"videoTitle\" value=\"@item.title\" /><input type=\"hidden\" name=\"videoDate\" value=\"@item.date\" /><input type=\"hidden\" name=\"page\" value=\"@pageNum\" /><input type=\"submit\" value=\"Add to Favorites\" /></form></div>")*@
+                                @Html.Raw("<div class=\"rTableCellVideo\">" + v.embed + "</div>")
                             </div>
-                        }
+
+                                <div class="rTableRow" id="BtnAddFavoriteVideo">
+                                    <form asp-controller="Home" asp-action="AddFavoriteVideo" method="post">
+                                        <input type="hidden" name="videoEmbed" value="@v.embed" />
+                                        <input type="hidden" name="videoTitle" value="@item.title" />
+                                        <input type="hidden" name="videoDate" value="@item.date" />
+                                        <input type="hidden" name="page" value="@pageNum" />
+                                        <input type="submit" value="Add to Favorites" />
+                                    </form>
+                                </div>
+                            }
+                        </div>
                     </td>
                 </tr>
             }
