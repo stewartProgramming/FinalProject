@@ -1006,6 +1006,39 @@ namespace FinalProject.Controllers
             }            
         }
 
+        public IActionResult QuizLeaderboards(string sortOrder)
+        {
+            ViewData["AttemptsSortParm"] = sortOrder == "Attempts" ? "Attempts_desc" : "Attempts";
+            ViewData["CorrectAnswersSortParm"] = sortOrder == "CorrectAnswers" ? "CorrectAnswers_desc" : "CorrectAnswers";
+            ViewData["AccuracySortParm"] = sortOrder == "Accuracy" ? "Accuracy_desc" : "Accuracy";
+            List<QuizStandings> leaderboards = _db.QuizStandings.ToList();
+            List<AspNetUsers> users = _db.AspNetUsers.ToList();
+            switch (sortOrder)
+            {
+                case "Attempts":
+                    leaderboards = leaderboards.OrderBy(x => x.QuizAttempts).ToList();
+                    break;
+                case "Attempts_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.QuizAttempts).ToList();
+                    break;
+                case "CorrectAnswers":
+                    leaderboards = leaderboards.OrderBy(x => x.CorrectAnswers).ToList();
+                    break;
+                case "CorrectAnswers_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.CorrectAnswers).ToList();
+                    break;
+                case "Accuracy":
+                    leaderboards = leaderboards.OrderBy(x => x.Accuracy).ToList();
+                    break;
+                case "Accuracy_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.Accuracy).ToList();
+                    break;
+                default:
+                    break;
+            }
+            return View(leaderboards);
+        }
+
         public void UpdateQuizStandingsCheckAnswer(string userAnswer, string correctAnswer)
         {
             QuizStandings quizStandings = GetQuizStandings();
@@ -1016,6 +1049,7 @@ namespace FinalProject.Controllers
             {
                 quizStandings.CorrectAnswers++;
             }
+            quizStandings.Accuracy = (double)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
             // update database QuizStandings
             _db.QuizStandings.Update(quizStandings);
             _db.SaveChanges();
