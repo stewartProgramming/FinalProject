@@ -926,10 +926,6 @@ namespace FinalProject.Controllers
             FootballMatches matches = FootballDAL.GetMatches(league, season);
             Match match = matches.matches[index];
 
-            QuizStandings qs = GetQuizStandings();
-            // increment quiz attempts by 1
-            qs.QuizAttempts++;
-
             var winner = "";
 
             if (match.score.ft[0] > match.score.ft[1])
@@ -948,39 +944,43 @@ namespace FinalProject.Controllers
             if (answer == winner)
             {
                 ViewBag.Result = "Congratulations! You really know your football trivia.";
-                // increment correct answers in QuizStandings
-                qs.CorrectAnswers++;
             }
             else
             {
                 ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
             }
-            // update database QuizStandings
-            _db.QuizStandings.Update(qs);
-            _db.SaveChanges();
+
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, winner);
             return View(match);
         }
 
         public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
         }
 
         public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
         }
 
         public QuizStandings GetQuizStandings()
@@ -996,12 +996,29 @@ namespace FinalProject.Controllers
                     QuizAttempts = 0,
                     CorrectAnswers = 0
                 };
+                _db.QuizStandings.Add(newQS);
+                _db.SaveChanges();
                 return newQS;
             }
             else
             {
                 return currentStanding;
             }            
+        }
+
+        public void UpdateQuizStandingsCheckAnswer(string userAnswer, string correctAnswer)
+        {
+            QuizStandings quizStandings = GetQuizStandings();
+            // increment quiz attempts by 1
+            quizStandings.QuizAttempts++;
+            // if user is correct increment CorrectAnswers
+            if (userAnswer == correctAnswer)
+            {
+                quizStandings.CorrectAnswers++;
+            }
+            // update database QuizStandings
+            _db.QuizStandings.Update(quizStandings);
+            _db.SaveChanges();
         }
 
         public IActionResult AddFavoriteTeam()
