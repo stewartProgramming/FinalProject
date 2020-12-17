@@ -2,27 +2,27 @@
     <div id="indexForm" class="container-fluid d-flex justify-content-center align-items-center h-100">
         <form style="text-align: center;">
             <div class="form-group h-100">
+                <h5><i>Your stats, your way</i></h5> <hr style="background-color: orange;" /><br />
                 <label for="league">Select league</label>
-                <select name="league" id="league">
-                    <option value="" disabled selected>League</option>
-                    <option value="en.1">England</option>
-                    <option value="es.1">Spain</option>
-                    <option value="de.1">Germany</option>
-                    <option value="it.1">Italy</option>
-                    <option value="fr.1">France</option>
-                </select>
+                    <select class="select-items" name="league" id="league" required>
+                        <option value="" disabled selected>League</option>
+                        <option value="en.1">England</option>
+                        <option value="es.1">Spain</option>
+                        <option value="de.1">Germany</option>
+                        <option value="it.1">Italy</option>
+                        <option value="fr.1">France</option>
+                    </select>
                 <label for="season">Select season</label>
-                <select name="season" id="season">
+                <select class="select-items" name="season" id="season" required>
                     <option value="" disabled selected>Season</option>
-                    <option value="2020-21">2020/2021</option>
-                    <option value="2019-20">2019/2020</option>
+                    <option value="2020-21">2020/21</option>
+                    <option value="2019-20">2019/20</option>
                 </select>
                 <br />
 
-                <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" />
-                <input type="submit" asp-controller="Home" asp-action="LeagueTeams" value="Teams" formmethod="post" />
-                <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" />
-                <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" />
+                <input type="submit" asp-controller="Home" asp-action="MatchResults" value="Results" formmethod="post" class="btn btn-dark"/>
+                <input type="submit" asp-controller="Home" asp-action="LeagueStandings" value="Standings" formmethod="post" class="btn btn-dark" />
+                <input type="submit" asp-controller="Home" asp-action="Quiz1" value="Quiz" formmethod="get" class="btn btn-dark" />
                 <p></p>
                 <p>Most Recent Highlight</p>
                 @Html.Raw(ViewBag.FirstVideo)

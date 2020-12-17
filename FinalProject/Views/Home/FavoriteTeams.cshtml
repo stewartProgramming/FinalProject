@@ -1,11 +1,11 @@
 ﻿@model List<FinalProject.Models.Match>
 
     @{
-        ViewData["Title"] = "MatchResults";
+        ViewData["Title"] = "Match Results";
     }
 
     <h1 style="text-align:center">Favorite Team Match Results</h1>
-    <button type="button" onclick="location.href='@Url.Action("AddFavoriteTeam", "Home")'" >Add More</button>
+    <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("AddFavoriteTeam", "Home")'" >Add More</button>
     <br />
     <table class="table">
         <thead>

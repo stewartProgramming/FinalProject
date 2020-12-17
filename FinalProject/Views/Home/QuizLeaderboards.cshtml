@@ -1,0 +1,50 @@
+﻿@model IEnumerable<FinalProject.Models.QuizStandings>
+@using System.Globalization;
+
+@{
+    ViewData["Title"] = "QuizLeaderboards";
+}
+
+<h1>Quiz Global Leaderboards</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AttemptsSortParm"]">Quiz Attempts</a>
+            </th>
+            <th>
+                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["CorrectAnswersSortParm"]">Correct Answers</a>
+            </th>
+            <th>
+                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AccuracySortParm"]">Accuracy</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuizAttempts)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CorrectAnswers)
+                </td>
+                <td>
+                    @{double acc = item.Accuracy * 100 ; }
+                    @acc
+                    @*@{double accuracy = (double)item.CorrectAnswers / item.QuizAttempts;}
+                    @accuracy.ToString("P2", CultureInfo.InvariantCulture)*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

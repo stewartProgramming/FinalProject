@@ -9,7 +9,7 @@ a.navbar-brand {
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+  color: white;
 }
 
 .btn-primary {
@@ -20,8 +20,13 @@ a {
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #fff;
-  background-color: #1b6ec2;
+  background-color: dimgray;
   border-color: #1861ac;
+  
+}
+
+a:hover {
+    color: thistle;
 }
 
 /* Sticky footer styles
@@ -70,7 +75,6 @@ body {
 
 .bg-custom {
     background-image: url(../img/background.jpg) !important;
-    /*background-image: url('https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');*/
 }
 
 
@@ -84,10 +88,11 @@ body {
 
 .rTable {
     display: table;
+    margin:10px;
 }
 
 .rTableRow {
-    display: table-row;
+    display: inline-flex;
 }
 
 
@@ -108,23 +113,53 @@ body {
     display: table-cell;
     position: relative;
     background-color: darkslategrey;
+    border: none;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 486px;
 }
 
-    .rTableCell #commentHeader{
-    background-color: darkslategrey;
+    .rTableCell #commentHeader {
+        background-color: darkslategrey;
+        display: inline-block;
+        vertical-align: top;
+        width: -webkit-fill-available;
     }
 
     .rTableCell #commentBody {
         background-color: darkolivegreen;
+        display: inline-block;
+        vertical-align: top;
+        width: -webkit-fill-available;
     }
     .rTableCell #commentForm {
         background-color: darkslategrey;
         padding-top: 2em;
+        width: -webkit-fill-available;
     }
 
-    .rTableRow div {
-        display: table-cell;
-    }
+.rTableCellVideo {
+    padding: 0;
+    position: relative;
+    display: inline-block;
+}
+
+#rTableCellVideo div {
+    height: 100% !important;
+    padding: 20em;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 15em !important;
+    padding-left: 30em;
+    padding-right: 30em;
+    padding-top: 15em;
+}
+
+#commentContainer {
+    display: block;
+    vertical-align: top;
+    margin: auto;
+}
 
 #indexContainer {
     min-height: 800px;
@@ -137,4 +172,48 @@ body {
     min-height: 25%;
     margin-top: 20em;
     width: 50%;
+}
+
+#BtnAddFavoriteVideo{
+    text-align:end;
+    margin-bottom:1em;
+    float:right;
+}
+
+td {
+    color: silver;
+}
+
+
+.standingsSort{
+    justify-content: left;
+    align-content: center;
+}
+
+.select-items {
+    background-color: #343a40;
+    border: 2px solid black;
+    color: #fff;
+}
+
+.select-fav-teams {
+    background-color: #343a40;
+    border: 2px solid black;
+    color: #fff;
+    width: auto;
+    padding-right: 1.5em;
+    background-position-x: 95%;
+}
+
+select {
+    width: 100px;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 0;
+    border-radius: 5px;
+    height: 34px;
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right #ddd;
+    -webkit-appearance: none;
+    background-position-x: 75px;
 }

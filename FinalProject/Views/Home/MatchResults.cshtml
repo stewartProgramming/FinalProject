@@ -1,97 +1,85 @@
 ﻿@model FootballMatches
 
 @{
-    ViewData["Title"] = "MatchResults";
+    ViewData["Title"] = "Match Results";
 }
-
-@{bool oldSeason = true;
-    foreach (var match in Model.matches)
-    {
-        if (match.score == null)
-        {
-            oldSeason = false;
-        }
-    }
-    }
 
 <h1 style="text-align:center">@Model.name Matches</h1>
 
 <table class="table table-striped">
     <thead>
-    <tr>
-        <th style="text-align:center">
-            <form asp-controller="Home" asp-action="LeagueStandings">
-                <input type="hidden" value="@ViewBag.League" name="league"/>
-                <input type="hidden" value="@ViewBag.Season" name="season"/>
-                <input type="submit" value="Standings"/>
-            </form>
-        </th>
-        <th style="text-align: center">
-            Date
-        </th>
-        <th style="text-align:center">
-            Home
-        </th>
-        <th style="text-align:center">
-            Away
-        </th>
-        @if (oldSeason == false)
-        {
+        <tr>
+            <th style="text-align:center">
+                <form asp-controller="Home" asp-action="LeagueStandings">
+                    <input type="hidden" value="@ViewBag.League" name="league" />
+                    <input type="hidden" value="@ViewBag.Season" name="season" />
+                    <input type="submit" value="Standings" class="select-items" />
+                </form>
+            </th>
+            <th style="text-align: center">
+                Date
+            </th>
+            <th style="text-align:center">
+                Home
+            </th>
+            <th style="text-align:center">
+                Away
+            </th>
             <th style="text-align:center">
                 Probability
             </th>
-        }
-    </tr>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.matches) {
-        <tr>
-            <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.round) 
-            </td>
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.date)
-            </td>
-            <td style="text-align:center">
-                @{
-                    if (item.score == null)
+        @foreach (var item in Model.matches)
+        {
+            <tr>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.round)
+                </td>
+                <td style="text-align: center">
+                    @Html.DisplayFor(modelItem => item.date)
+                </td>
+                <td style="text-align:center">
+                    @{
+                        if (item.score == null)
+                        {
+                            <p>@Html.DisplayFor(modelItem => item.team1) </p>
+                        }
+                        else
+                        {
+                            <p>@Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]</p>
+                        }
+                    }
+                </td>
+                <td style="text-align: center">
+                    @{
+                        if (item.score == null)
+                        {
+                            <p>@Html.DisplayFor(modelItem => item.team2) </p>
+                        }
+                        else
+                        {
+                            <p>@Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]</p>
+                        }
+                    }
+                </td>
+                <td style="text-align:center">
+                    @if (item.score == null && item.round != "Matchday 1")
                     {
-                        <p>@Html.DisplayFor(modelItem => item.team1) </p>
+                        <form asp-controller="Home" asp-action="Probability" method="get">
+                            <input type="hidden" value="@Model.name" name="league" />
+                            <input type="hidden" value="@item.team1" name="team1" />
+                            <input type="hidden" value="@item.team2" name="team2" />
+                            <input type="submit" value="Probability" class="btn btn-dark" style="align-content:center" />
+                        </form>
                     }
                     else
                     {
-                        <p>@Html.DisplayFor(modelItem => item.team1) [@Html.DisplayFor(modelItem => item.score.ft[0])]</p>
+                        <p>Match Finished</p>
                     }
-                }
-            </td>
-            <td style="text-align: center">
-                @{
-                    if (item.score == null)
-                    {
-                        <p>@Html.DisplayFor(modelItem => item.team2) </p>
-                    }
-                    else
-                    {
-                        <p>@Html.DisplayFor(modelItem => item.team2) [@Html.DisplayFor(modelItem => item.score.ft[1])]</p> 
-                    }
-                }
-            </td>
-            <td style="text-align:center">
-                @if (item.score == null && item.round != "Matchday 1")
-                {
-                    <form asp-controller="Home" asp-action="Probability" method="get">
-                        <input type="hidden" value="@Model.name" name="league" />
-                        <input type="hidden" value="@item.team1" name="team1" />
-                        <input type="hidden" value="@item.team2" name="team2" />
-                        <input type="submit" value="Probability" style="align-content:center"/>
-                    </form>
-                }
-                else
-                {
-                    <p>Match Finished</p>
-                }
-            </td>
-        </tr>
-    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -33,16 +33,24 @@ namespace FinalProject.Controllers
         {
             var highlights = FootballDAL.CallHighlightAPI();
             List<Highlight> firstVideo = JsonConvert.DeserializeObject<List<Highlight>>(highlights);
-            ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            // checks to see if API returned a result and grabs random community favorite video if null
+            if (firstVideo == null)
+            {
+                Random r = new Random();
+                int i = r.Next(_db.CommunityFavoriteVideos.Count() - 1);
+
+                ViewBag.FirstVideo = _db.CommunityFavoriteVideos.Find(i).EmbedCode;
+            }
+            else
+            {
+                ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            }
             return View();
         }
 
         //figure out what list to display
         public IActionResult RecentHighlights(int? page)
         {
-            // get videoID for items in highlightlist where embed is in CommunityFavoriteVideo
-            //_db.CommunityFavoriteVideos.Where(x => x.EmbedCode == )
-
             List<List<Highlight>> list = _highlightService.GetHighlights();
             if (list.Any())
             {
@@ -51,40 +59,12 @@ namespace FinalProject.Controllers
                     page = 1;
                 }
                 ViewBag.pageCount = page;
-                ViewBag.listCount = list.Count;
+                ViewBag.listCount = list.Count;                               
 
-                // attaching comments to videos
-                string currentEmbedForView;
-                var videoComments = _db.VideoComments.ToList();
-                List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
-                foreach (var vc in videoComments)
-                {
-                    matchingVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vc.VideoId));
-                }
-                // dictionary videoID: embed
-                // 
+                List<Highlight> currentList = list[(int)page - 1];
+                // attaching comments to videos 
+                currentList = AttachCommentsToVideos(currentList);
 
-                var currentList = list[(int)page - 1];
-                foreach (var match in currentList)
-                {
-                    foreach (var video in match.videos)
-                    {
-                        currentEmbedForView = video.embed;
-                        foreach (var v in matchingVideos.Distinct())
-                        {
-                            if (currentEmbedForView == v.EmbedCode)
-                            {
-                                //video.VideoComments = (VideoComments) videoComments.Where(x => x.VideoId == v.Id).FirstOrDefault();
-                                List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
-                                foreach (var item in vc)
-                                {
-                                    item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
-                                }
-                                video.VideoComments = vc;
-                            }
-                        }
-                    }
-                }
                 ViewData["userId"] = FindUser();
 
                 return View(currentList);
@@ -93,33 +73,104 @@ namespace FinalProject.Controllers
             {
                 List<Highlight> emptyList = new List<Highlight> { };
                 return View(emptyList);
-            }
-            
-        }
-        [HttpPost]
-        public IActionResult CommentHighlightVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
-        {
-            int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
-                                   where v.EmbedCode == videoEmbed
-                                   select v.Id).FirstOrDefault();
-            if(communityFavoriteVideoID == 0)
-            {
-                CommunityFavoriteVideos fv = new CommunityFavoriteVideos();
-                fv.EmbedCode = videoEmbed;
-                fv.VideoDate = videoDate;
-                fv.VideoTitle = videoTitle;
-                _db.CommunityFavoriteVideos.Add(fv);
-                _db.SaveChanges();
             }            
+        }
 
-            VideoComments vc = new VideoComments();
-            vc.VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id;
-            vc.DateCreated = DateTime.Now;
-            vc.UserId = FindUser();
-            vc.VideoComment = comment;
-            _db.VideoComments.Add(vc);
-            _db.SaveChanges();
-            return RedirectToAction("RecentHighlights", new { page = page });
+        public List<Highlight> AttachCommentsToVideos (List<Highlight> currentList)
+        {
+            string currentEmbedForView;
+            var videoComments = _db.VideoComments.ToList();
+            List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+            // retrieving videos from FavoriteVideos table that has a comment
+            foreach (var vc in videoComments)
+            {
+                matchingVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vc.VideoId));
+            }
+            foreach (var match in currentList)
+            {
+                foreach (var video in match.videos)
+                {
+                    currentEmbedForView = video.embed;
+                    foreach (var v in matchingVideos.Distinct())
+                    {
+                        if (currentEmbedForView == v.EmbedCode)
+                        {
+                            List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+                            foreach (var item in vc)
+                            {
+                                item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+                            }
+                            video.VideoComments = vc;
+                        }
+                    }
+                }
+            }
+            return currentList;
+        }
+        public List<CommunityFavoriteVideos> AttachCommentsToCommunityFavoriteVideos (List<CommunityFavoriteVideos> currentList)
+        {
+            string currentEmbedForView;
+            var videoComments = _db.VideoComments.ToList();
+            List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
+            var users = _db.AspNetUsers.ToList();
+            // retrieving videos from FavoriteVideos table that has a comment
+            
+            //foreach (var match in currentList)
+            //{
+            //        currentEmbedForView = match.;
+            //        foreach (var v in matchingVideos.Distinct())
+            //        {
+            //            if (currentEmbedForView == v.EmbedCode)
+            //            {
+            //                List<VideoComments> vc = videoComments.Where(x => x.VideoId == v.Id).ToList();
+            //                foreach (var item in vc)
+            //                {
+            //                    item.User = _db.AspNetUsers.Where(x => x.Id == item.UserId).FirstOrDefault();
+            //                }
+            //                video.VideoComments = vc;
+            //            }
+            //        }
+            //}
+            return currentList;
+        }
+
+        [HttpPost]
+        public IActionResult CommentHighlightVideo(string comment, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                                 where v.EmbedCode == videoEmbed
+                                                 select v.Id).FirstOrDefault();
+                if (communityFavoriteVideoID == 0)
+                {
+                    CommunityFavoriteVideos fv = new CommunityFavoriteVideos
+                    {
+                        EmbedCode = videoEmbed,
+                        VideoDate = videoDate,
+                        VideoTitle = videoTitle
+                    };
+                    _db.CommunityFavoriteVideos.Add(fv);
+                    _db.SaveChanges();
+                }
+
+                VideoComments vc = new VideoComments
+                {
+                    VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
+                    DateCreated = DateTime.Now,
+                    UserId = FindUser(),
+                    VideoComment = comment
+                };
+                _db.VideoComments.Add(vc);
+                _db.SaveChanges();
+
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+            else
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
         }
 
         [HttpPost]
@@ -132,19 +183,97 @@ namespace FinalProject.Controllers
         public IActionResult DeleteComment(int commentID)
         {
             VideoComments vc = _db.VideoComments.Find(commentID);
-            _db.VideoComments.Remove(vc);
-            _db.SaveChanges();
-            return RedirectToAction("RecentHighlights");
+
+            if (vc.UserId == FindUser())
+            {
+                _db.VideoComments.Remove(vc);
+                _db.SaveChanges();
+                var highlightCache =_highlightService.GetHighlights();
+                // remove video comment from cache service
+                foreach (var page in highlightCache)
+                {
+                    foreach (var match in page)
+                    {
+                        foreach (var video in match.videos)
+                        {
+                            if(video.VideoComments != null)
+                            {
+                                for (int i = 0; i < video.VideoComments.Count; i++)
+                                {
+                                    if (video.VideoComments[i].Id == commentID)
+                                    {
+                                        video.VideoComments.RemoveAt(i);
+                                    }
+                                }
+                            }                        
+                        }
+                    }
+                }
+            }
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+
         [HttpPost]
-        public IActionResult SubmitComment(int Id, int VideoId, string UserId, string VideoComment, DateTime DateCreated)
+        public IActionResult SubmitComment(int Id, string VideoComment)
         {
             VideoComments vc = _db.VideoComments.Find(Id);
-            vc.VideoComment = VideoComment;
-            _db.VideoComments.Update(vc);
-            _db.SaveChanges();
-            return RedirectToAction("RecentHighlights");
+            if(vc.UserId == FindUser())
+            {
+                vc.VideoComment = VideoComment;
+                _db.VideoComments.Update(vc);
+                _db.SaveChanges();
+            }
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+
+        [HttpPost]
+        public IActionResult AddFavoriteVideo(string comment, int page, string videoEmbed, string videoTitle, DateTime videoDate)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                int? communityFavoriteVideoID = (from v in _db.CommunityFavoriteVideos
+                                                 where v.EmbedCode == videoEmbed
+                                                 select v.Id).FirstOrDefault();
+                if (communityFavoriteVideoID == 0)
+                {
+                    CommunityFavoriteVideos cfv = new CommunityFavoriteVideos
+                    {
+                        EmbedCode = videoEmbed,
+                        VideoDate = videoDate,
+                        VideoTitle = videoTitle
+                    };
+                    _db.CommunityFavoriteVideos.Add(cfv);
+                    _db.SaveChanges();
+                }
+
+                UserFavoriteVideos fv = new UserFavoriteVideos
+                {
+                    VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
+                    UserId = FindUser()
+                };
+                _db.UserFavoriteVideos.Add(fv);
+                _db.SaveChanges();
+
+                return RedirectToAction("RecentHighlights", new { page = page });
+            }
+            else
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+        }
+
+        public IActionResult DeleteFavoriteVideo(int videoID)
+        {
+            UserFavoriteVideos fv = new UserFavoriteVideos();
+            fv = _db.UserFavoriteVideos.Find(videoID, FindUser());
+            _db.UserFavoriteVideos.Remove(fv);
+            _db.SaveChanges();
+
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
@@ -165,10 +294,28 @@ namespace FinalProject.Controllers
                 search.AnotherHighlight = list[(int)page - 1];
                 search.SearchFor = searchFor;
 
+                search.AnotherHighlight = AttachCommentsToVideos(search.AnotherHighlight.ToList());
+                ViewData["userId"] = FindUser();
+
                 return View(search);
             }
             return RedirectToAction("Index");
         }
+        
+        public IActionResult FavoriteHighlights()
+        {
+            string currentUser = FindUser();
+            var favVideoIDs = _db.UserFavoriteVideos.Where(x => x.UserId == currentUser).ToList();
+            List<CommunityFavoriteVideos> favVideos = new List<CommunityFavoriteVideos>();
+            foreach (var vid in favVideoIDs)
+            {
+                favVideos.AddRange(_db.CommunityFavoriteVideos.Where(x => x.Id == vid.VideoId));
+            }
+            favVideos = AttachCommentsToCommunityFavoriteVideos(favVideos);
+            ViewData["userId"] = FindUser();
+            return View(favVideos);
+        }
+
         [HttpPost]
         public IActionResult LeagueStandings(string league, string season)
         {
@@ -813,29 +960,110 @@ namespace FinalProject.Controllers
             {
                 ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
             }
+
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, winner);
             return View(match);
         }
 
         public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
         }
 
         public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
+        }
+
+        public QuizStandings GetQuizStandings()
+        {
+            string currentUser = FindUser();
+            QuizStandings currentStanding = _db.QuizStandings.Find(currentUser);
+            // adds user to QuizStandings table if user does not exist
+            if(currentStanding == null)
+            {
+                QuizStandings newQS = new QuizStandings
+                {
+                    UserId = currentUser,
+                    QuizAttempts = 0,
+                    CorrectAnswers = 0
+                };
+                _db.QuizStandings.Add(newQS);
+                _db.SaveChanges();
+                return newQS;
+            }
+            else
+            {
+                return currentStanding;
+            }            
+        }
+
+        public IActionResult QuizLeaderboards(string sortOrder)
+        {
+            ViewData["AttemptsSortParm"] = sortOrder == "Attempts" ? "Attempts_desc" : "Attempts";
+            ViewData["CorrectAnswersSortParm"] = sortOrder == "CorrectAnswers" ? "CorrectAnswers_desc" : "CorrectAnswers";
+            ViewData["AccuracySortParm"] = sortOrder == "Accuracy" ? "Accuracy_desc" : "Accuracy";
+            List<QuizStandings> leaderboards = _db.QuizStandings.ToList();
+            List<AspNetUsers> users = _db.AspNetUsers.ToList();
+            switch (sortOrder)
+            {
+                case "Attempts":
+                    leaderboards = leaderboards.OrderBy(x => x.QuizAttempts).ToList();
+                    break;
+                case "Attempts_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.QuizAttempts).ToList();
+                    break;
+                case "CorrectAnswers":
+                    leaderboards = leaderboards.OrderBy(x => x.CorrectAnswers).ToList();
+                    break;
+                case "CorrectAnswers_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.CorrectAnswers).ToList();
+                    break;
+                case "Accuracy":
+                    leaderboards = leaderboards.OrderBy(x => x.Accuracy).ToList();
+                    break;
+                case "Accuracy_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.Accuracy).ToList();
+                    break;
+                default:
+                    break;
+            }
+            return View(leaderboards);
+        }
+
+        public void UpdateQuizStandingsCheckAnswer(string userAnswer, string correctAnswer)
+        {
+            QuizStandings quizStandings = GetQuizStandings();
+            // increment quiz attempts by 1
+            quizStandings.QuizAttempts++;
+            // if user is correct increment CorrectAnswers
+            if (userAnswer == correctAnswer)
+            {
+                quizStandings.CorrectAnswers++;
+            }
+            quizStandings.Accuracy = (double)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
+            // update database QuizStandings
+            _db.QuizStandings.Update(quizStandings);
+            _db.SaveChanges();
         }
 
         public IActionResult AddFavoriteTeam()

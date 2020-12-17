@@ -1,17 +1,17 @@
 ﻿@model FootballStandings
 
 @{
-    ViewData["Title"] = "View";
+    ViewData["Title"] = "League Standings";
 }
 
-<div>
+<div style="color: silver;">
 
     <h1 style="text-align:center"><img src="@Model.response[0].league.logo" height="50"> @Model.response[0].league.name @Model.response[0].league.season Standings</h1>
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="text-align:center">
+                <th class="standingsSort">
                     #
                 </th>
                 <th style="text-align:center">
