@@ -113,6 +113,10 @@ body {
     display: table-cell;
     position: relative;
     background-color: darkslategrey;
+    border: none;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 486px;
 }
 
     .rTableCell #commentHeader {
@@ -135,10 +139,21 @@ body {
         width: -webkit-fill-available;
     }
 
-.rTableCellVideo div {
+.rTableCellVideo {
+    padding: 0;
+    position: relative;
+    display: inline-block;
+}
+
+#rTableCellVideo div {
+    height: 100% !important;
     padding: 20em;
     position: relative;
     display: inline-block;
+    padding-bottom: 15em !important;
+    padding-left: 30em;
+    padding-right: 30em;
+    padding-top: 15em;
 }
 
 #commentContainer {
