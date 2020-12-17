@@ -33,7 +33,18 @@ namespace FinalProject.Controllers
         {
             var highlights = FootballDAL.CallHighlightAPI();
             List<Highlight> firstVideo = JsonConvert.DeserializeObject<List<Highlight>>(highlights);
-            ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            // checks to see if API returned a result and grabs random community favorite video if null
+            if (firstVideo == null)
+            {
+                Random r = new Random();
+                int i = r.Next(_db.CommunityFavoriteVideos.Count() - 1);
+
+                ViewBag.FirstVideo = _db.CommunityFavoriteVideos.Find(i).EmbedCode;
+            }
+            else
+            {
+                ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            }
             return View();
         }
 
@@ -1049,7 +1060,7 @@ namespace FinalProject.Controllers
             {
                 quizStandings.CorrectAnswers++;
             }
-            quizStandings.Accuracy = (double)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
+            quizStandings.Accuracy = (decimal)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
             // update database QuizStandings
             _db.QuizStandings.Update(quizStandings);
             _db.SaveChanges();
