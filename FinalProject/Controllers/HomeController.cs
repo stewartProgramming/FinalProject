@@ -962,7 +962,10 @@ namespace FinalProject.Controllers
             }
 
             // call method to update quiz standings
-            UpdateQuizStandingsCheckAnswer(answer, winner);
+            if (FindUser() != "")
+            {
+                UpdateQuizStandingsCheckAnswer(answer, winner);
+            }
             return View(match);
         }
 
@@ -970,7 +973,10 @@ namespace FinalProject.Controllers
         {
             QuizResultViewModel quizVM = new QuizResultViewModel();
             // call method to update quiz standings
-            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
+            if (FindUser() != "")
+            {
+                UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
+            }
 
             quizVM.Answer = answer;
             quizVM.RandomAnswers = randomAnswers;
@@ -984,7 +990,10 @@ namespace FinalProject.Controllers
         {
             QuizResultViewModel quizVM = new QuizResultViewModel();
             // call method to update quiz standings
-            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
+            if (FindUser() != "")
+            {
+                UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
+            }
 
             quizVM.Answer = answer;
             quizVM.RandomAnswers = randomAnswers;
