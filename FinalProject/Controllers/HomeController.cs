@@ -157,7 +157,7 @@ namespace FinalProject.Controllers
                 VideoComments vc = new VideoComments
                 {
                     VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
-                    DateCreated = DateTime.Now,
+                    DateCreated = DateTime.Now.ToLocalTime(),
                     UserId = FindUser(),
                     VideoComment = comment
                 };
