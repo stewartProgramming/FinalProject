@@ -177,6 +177,7 @@ namespace FinalProject.Controllers
         public IActionResult EditComment(int commentID)
         {
             VideoComments vc = _db.VideoComments.Find(commentID);
+            TempData["referer"] = Request.Headers["Referer"].ToString();
             return View(vc);
         }
 
@@ -211,7 +212,7 @@ namespace FinalProject.Controllers
                 }
             }
 
-            return Redirect(Request.Headers["Referer"].ToString());
+            return Redirect(TempData["referer"].ToString());
         }
 
         [HttpPost]
@@ -225,7 +226,7 @@ namespace FinalProject.Controllers
                 _db.SaveChanges();
             }
 
-            return Redirect(Request.Headers["Referer"].ToString());
+            return Redirect(TempData["referer"].ToString());
         }
 
         [HttpPost]
