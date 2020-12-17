@@ -879,7 +879,13 @@ namespace FinalProject.Controllers
                 options.SecondIncorrect = secondIncorrect;
                 options.ThirdIncorrect = thirdIncorrect;
 
-                return RedirectToAction("Quiz2", options);
+                TempData["question"] = questions[1];
+                TempData["correctAnswer"] = correctAnswer;
+                TempData["firstIncorrect"] = firstIncorrect;
+                TempData["secondIncorrect"] = secondIncorrect;
+                TempData["thirdIncorrect"] = thirdIncorrect;
+
+                return RedirectToAction("Quiz2");
             }
             else if (qIndex == 2)
             {
@@ -915,20 +921,26 @@ namespace FinalProject.Controllers
                 options.SecondIncorrect = secondIncorrect;
                 options.ThirdIncorrect = thirdIncorrect;
 
-                return RedirectToAction("Quiz3", options);
+                TempData["question"] = questions[2];
+                TempData["correctAnswer"] = correctAnswer;
+                TempData["firstIncorrect"] = firstIncorrect;
+                TempData["secondIncorrect"] = secondIncorrect;
+                TempData["thirdIncorrect"] = thirdIncorrect;
+
+                return RedirectToAction("Quiz3");
             }
 
             return View();
         }
 
-        public IActionResult Quiz2(QuestionMultipleChoice options)
+        public IActionResult Quiz2()
         {
-            return View(options);
+            return View();
         }
 
-        public IActionResult Quiz3(QuestionMultipleChoice options)
+        public IActionResult Quiz3()
         {
-            return View(options);
+            return View();
         }
 
         [HttpPost]
