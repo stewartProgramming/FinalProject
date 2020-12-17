@@ -22,7 +22,7 @@
 
 <form asp-controller="Home" asp-action="SearchHighlights" style="text-align: right;" method="get">
     <input type="text" name="searchFor" placeholder="Search" required />
-    <input type="submit" />
+    <input class="btn btn-dark" type="submit" />
 </form>
 <br />
 
@@ -132,25 +132,25 @@
         @{
             if (pageNum >= 2)
             {
-                <button class="btn-light" name="page" type="submit" value="@previous">Previous</button>
+                <button class="btn btn-light" name="page" type="submit" value="@previous">Previous</button>
 
                 @if (pageNum != pr)
                 {
-                    <input class="btn-light" name="page" type="submit" value="@pr" />
+                    <input class="btn btn-light" name="page" type="submit" value="@pr" />
                 }
-                <input class="btn-light" name="page" type="submit" value="@p" />
+                <input class="btn btn-light" name="page" type="submit" value="@p" />
             }
         }
-        <input class="btn-dark" name="page" type="submit" value="@pageNum" />
+        <input class="btn btn-dark" name="page" type="submit" value="@pageNum" />
         @{
             if (pageNum < numOfpages)
             {
-                <input class="btn-light" name="page" type="submit" value="@n" />
+                <input class="btn btn-light" name="page" type="submit" value="@n" />
                 @if (pageNum != ne)
                 {
-                    <input class="btn-light" name="page" type="submit" value="@ne" />
+                    <input class="btn btn-light" name="page" type="submit" value="@ne" />
                 }
-                <button class="btn-light" name="page" type="submit" value="@next">Next</button>
+                <button class="btn btn-light" name="page" type="submit" value="@next">Next</button>
             }
         }
     </form>

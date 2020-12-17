@@ -12,6 +12,8 @@ namespace FinalProject.Models
 
         [ForeignKey("AspNetUsers")]
         public virtual string UserId { get; set; }
+
+        [Display(Name = "Video Comment")]
         public string VideoComment { get; set; }
         public DateTime DateCreated { get; set; }
 

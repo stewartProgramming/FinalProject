@@ -127,6 +127,7 @@ body {
         display: inline-block;
         vertical-align: top;
         width: -webkit-fill-available;
+        margin: 10px;
     }
     .rTableCell #commentForm {
         background-color: darkslategrey;

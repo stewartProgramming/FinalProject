@@ -10,17 +10,17 @@
 
     <table class="table table-striped">
         <thead>
-            <tr>
+            <tr style="text-align:center">
                 <th class="standingsSort">
                     #
                 </th>
-                <th style="text-align:center">
+                <th>
                     Name
                 </th>
-                <th style="text-align:center">
+                <th>
                     Form
                 </th>
-                <th style="text-align:center">
+                <th>
                     Points / Goal Difference
                 </th>
             </tr>
@@ -28,17 +28,17 @@
         <tbody>
             @foreach (var item in Model.response[0].league.standings[0])
             {
-                <tr>
-                    <td style="text-align:center">
+                <tr style="text-align:center">
+                    <td>
                         @Html.DisplayFor(modelItem => item.rank)
                     </td>
-                    <td style="text-align:center">
+                    <td>
                         <img src="@Html.DisplayFor(modelItem => item.team.logo)" width="25" height="25" /> @Html.DisplayFor(modelItem => item.team.name)
                     </td>
-                    <td style="text-align:center">
+                    <td>
                         @Html.DisplayFor(modelItem => item.form)
                     </td>
-                    <td style="text-align:center">
+                    <td>
                         @Html.DisplayFor(modelItem => item.points) / @Html.DisplayFor(modelItem => item.goalsDiff)
                     </td>
                 </tr>

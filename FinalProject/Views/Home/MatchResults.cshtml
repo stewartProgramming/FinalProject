@@ -8,24 +8,24 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th style="text-align:center">
+        <tr style="text-align: center">
+            <th>
                 <form asp-controller="Home" asp-action="LeagueStandings">
                     <input type="hidden" value="@ViewBag.League" name="league" />
                     <input type="hidden" value="@ViewBag.Season" name="season" />
-                    <input type="submit" value="Standings" class="select-items" />
+                    <input type="submit" value="Standings" class="select-items; btn btn-dark" />
                 </form>
             </th>
-            <th style="text-align: center">
+            <th>
                 Date
             </th>
-            <th style="text-align:center">
+            <th>
                 Home
             </th>
-            <th style="text-align:center">
+            <th>
                 Away
             </th>
-            <th style="text-align:center">
+            <th>
                 Probability
             </th>
         </tr>
@@ -33,14 +33,14 @@
     <tbody>
         @foreach (var item in Model.matches)
         {
-            <tr>
-                <td style="text-align:center">
+            <tr style="text-align: center">
+                <td>
                     @Html.DisplayFor(modelItem => item.round)
                 </td>
-                <td style="text-align: center">
+                <td>
                     @Html.DisplayFor(modelItem => item.date)
                 </td>
-                <td style="text-align:center">
+                <td>
                     @{
                         if (item.score == null)
                         {
@@ -52,7 +52,7 @@
                         }
                     }
                 </td>
-                <td style="text-align: center">
+                <td>
                     @{
                         if (item.score == null)
                         {
@@ -64,7 +64,7 @@
                         }
                     }
                 </td>
-                <td style="text-align:center">
+                <td>
                     @if (item.score == null && item.round != "Matchday 1")
                     {
                         <form asp-controller="Home" asp-action="Probability" method="get">
