@@ -4,11 +4,11 @@
     ViewData["Title"] = "FavoriteHighlights";
 }
 
-<h1>Favorite Highlights</h1>
+<h1 style="text-align:center">Favorite Highlights</h1>
 
 <table class="table">
     <thead>
-        <tr>
+        <tr style="text-align:center">
             <th>
                 Match
             </th>
@@ -18,7 +18,9 @@
             <th>
                 Highlight Video
             </th>
-            <th></th>
+            <th>
+                Remove
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +30,7 @@
                 @Html.DisplayFor(modelItem => item.VideoTitle)
                 @Html.DisplayFor(modelItem => item.VideoDate)
             </td>
-            <td style="background-color: darkslategrey">
+            <td style="background-color: darkslategrey;">
 
                 @if (item.VideoComments != null)
                 {
@@ -48,7 +50,7 @@
                                         {
                                             <form asp-controller="Home" asp-action="EditComment" method="post">
                                                 <input type="hidden" name="commentID" value="@comment.Id" />
-                                                <input type="submit" value="Edit" />
+                                                <input class="btn btn-dark" type="submit" value="Edit" />
                                             </form>
                                         }
                                     </div>
@@ -62,7 +64,7 @@
                                     <input type="hidden" name="videoEmbed" value="@item.EmbedCode" />
                                     <input type="hidden" name="videoTitle" value="@item.VideoTitle" />
                                     <input type="hidden" name="videoDate" value="@item.VideoDate" />
-                                    <input type="submit" />
+                                    <input class="btn btn-dark" type="submit" />
                                 </form>
                             </div>
                         </div>
@@ -70,11 +72,11 @@
                     </div>
                 }
             </td>
-            <td>
+            <td style="padding: 4px 0px 4px 0px">
                 @Html.Raw("<div class=\"rTableCellVideo\">" + item.EmbedCode + "</div>")
             </td>
             <td>
-                <a asp-action="DeleteFavoriteVideo" asp-route-videoID="@item.Id">Delete</a>
+                <a class="btn btn-danger" asp-action="DeleteFavoriteVideo" asp-route-videoID="@item.Id">Delete</a>
             </td>
         </tr>
 }
