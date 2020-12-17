@@ -252,7 +252,7 @@ select {
 }
 
 #Ball {
-    line-height: 40px;
+    line-height: 50px;
     text-align: center;
     text-transform: uppercase;
     -webkit-animation-duration: 1s;
