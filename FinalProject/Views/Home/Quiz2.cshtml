@@ -4,11 +4,18 @@
     ViewData["Title"] = "Quiz";
 }
 
-@{ List<string> allAnswers = new List<string>();
-    allAnswers.Add(Model.CorrectAnswer);
-    allAnswers.Add(Model.FirstIncorrect);
-    allAnswers.Add(Model.SecondIncorrect);
-    allAnswers.Add(Model.ThirdIncorrect);
+@{ 
+    string question = TempData["question"].ToString();
+    string correctAnswer = TempData["correctAnswer"].ToString();
+    string firstIncorrect = TempData["firstIncorrect"].ToString();
+    string secondIncorrect = TempData["secondIncorrect"].ToString();
+    string thirdIncorrect = TempData["thirdIncorrect"].ToString();
+
+    List<string> allAnswers = new List<string>();
+    allAnswers.Add(correctAnswer);
+    allAnswers.Add(firstIncorrect);
+    allAnswers.Add(secondIncorrect);
+    allAnswers.Add(thirdIncorrect);
 
     Random randomSort = new Random();
     int randomIndex = randomSort.Next(0, allAnswers.Count - 1);
@@ -25,14 +32,14 @@
 <div class="align-content-center" style="text-align: center;">
     <h1>Test Your Football Knowledge</h1>
 
-    <hr />
+    <hr style="background-color: silver;" />
 
-    <p>@Model.Question</p>
+    <p>@question</p>
 
     <form asp-action="Quiz2Result" asp-controller="Home" method="post">
 
-        <input type="hidden" name="question" value="@Model.Question"/>
-        <input type="hidden" name="correctAnswer" value="@Model.CorrectAnswer" />
+        <input type="hidden" name="question" value="@question"/>
+        <input type="hidden" name="correctAnswer" value="@correctAnswer" />
 
         @foreach (var answer in randomAnswers)
         {
