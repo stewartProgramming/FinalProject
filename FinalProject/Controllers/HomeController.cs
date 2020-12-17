@@ -1060,7 +1060,7 @@ namespace FinalProject.Controllers
             {
                 quizStandings.CorrectAnswers++;
             }
-            quizStandings.Accuracy = (decimal)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
+            quizStandings.Accuracy = (double)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
             // update database QuizStandings
             _db.QuizStandings.Update(quizStandings);
             _db.SaveChanges();

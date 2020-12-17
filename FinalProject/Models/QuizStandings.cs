@@ -10,7 +10,7 @@ namespace FinalProject.Models
         public string UserId { get; set; }
         public int QuizAttempts { get; set; }
         public int CorrectAnswers { get; set; }
-        public decimal? Accuracy { get; set; }
+        public double Accuracy { get; set; }
 
         public virtual AspNetUsers User { get; set; }
     }
