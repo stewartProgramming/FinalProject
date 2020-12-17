@@ -33,7 +33,18 @@ namespace FinalProject.Controllers
         {
             var highlights = FootballDAL.CallHighlightAPI();
             List<Highlight> firstVideo = JsonConvert.DeserializeObject<List<Highlight>>(highlights);
-            ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            // checks to see if API returned a result and grabs random community favorite video if null
+            if (firstVideo == null)
+            {
+                Random r = new Random();
+                int i = r.Next(_db.CommunityFavoriteVideos.Count() - 1);
+
+                ViewBag.FirstVideo = _db.CommunityFavoriteVideos.Find(i).EmbedCode;
+            }
+            else
+            {
+                ViewBag.FirstVideo = firstVideo[0].videos[0].embed;
+            }
             return View();
         }
 
@@ -949,29 +960,110 @@ namespace FinalProject.Controllers
             {
                 ViewBag.Result = "Sorry, you were incorrect. Better luck next time.";
             }
+
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, winner);
             return View(match);
         }
 
         public IActionResult Quiz2Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
         }
 
         public IActionResult Quiz3Result(List<string> randomAnswers, string answer, string correctAnswer, string question)
         {
-            Quiz2ResultViewModel quiz2VM = new Quiz2ResultViewModel();
-            quiz2VM.Answer = answer;
-            quiz2VM.RandomAnswers = randomAnswers;
-            quiz2VM.CorrectAnswer = correctAnswer;
-            quiz2VM.Question = question;
+            QuizResultViewModel quizVM = new QuizResultViewModel();
+            // call method to update quiz standings
+            UpdateQuizStandingsCheckAnswer(answer, correctAnswer);
 
-            return View(quiz2VM);
+            quizVM.Answer = answer;
+            quizVM.RandomAnswers = randomAnswers;
+            quizVM.CorrectAnswer = correctAnswer;
+            quizVM.Question = question;
+
+            return View(quizVM);
+        }
+
+        public QuizStandings GetQuizStandings()
+        {
+            string currentUser = FindUser();
+            QuizStandings currentStanding = _db.QuizStandings.Find(currentUser);
+            // adds user to QuizStandings table if user does not exist
+            if(currentStanding == null)
+            {
+                QuizStandings newQS = new QuizStandings
+                {
+                    UserId = currentUser,
+                    QuizAttempts = 0,
+                    CorrectAnswers = 0
+                };
+                _db.QuizStandings.Add(newQS);
+                _db.SaveChanges();
+                return newQS;
+            }
+            else
+            {
+                return currentStanding;
+            }            
+        }
+
+        public IActionResult QuizLeaderboards(string sortOrder)
+        {
+            ViewData["AttemptsSortParm"] = sortOrder == "Attempts" ? "Attempts_desc" : "Attempts";
+            ViewData["CorrectAnswersSortParm"] = sortOrder == "CorrectAnswers" ? "CorrectAnswers_desc" : "CorrectAnswers";
+            ViewData["AccuracySortParm"] = sortOrder == "Accuracy" ? "Accuracy_desc" : "Accuracy";
+            List<QuizStandings> leaderboards = _db.QuizStandings.ToList();
+            List<AspNetUsers> users = _db.AspNetUsers.ToList();
+            switch (sortOrder)
+            {
+                case "Attempts":
+                    leaderboards = leaderboards.OrderBy(x => x.QuizAttempts).ToList();
+                    break;
+                case "Attempts_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.QuizAttempts).ToList();
+                    break;
+                case "CorrectAnswers":
+                    leaderboards = leaderboards.OrderBy(x => x.CorrectAnswers).ToList();
+                    break;
+                case "CorrectAnswers_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.CorrectAnswers).ToList();
+                    break;
+                case "Accuracy":
+                    leaderboards = leaderboards.OrderBy(x => x.Accuracy).ToList();
+                    break;
+                case "Accuracy_desc":
+                    leaderboards = leaderboards.OrderByDescending(x => x.Accuracy).ToList();
+                    break;
+                default:
+                    break;
+            }
+            return View(leaderboards);
+        }
+
+        public void UpdateQuizStandingsCheckAnswer(string userAnswer, string correctAnswer)
+        {
+            QuizStandings quizStandings = GetQuizStandings();
+            // increment quiz attempts by 1
+            quizStandings.QuizAttempts++;
+            // if user is correct increment CorrectAnswers
+            if (userAnswer == correctAnswer)
+            {
+                quizStandings.CorrectAnswers++;
+            }
+            quizStandings.Accuracy = (double)quizStandings.CorrectAnswers / quizStandings.QuizAttempts;
+            // update database QuizStandings
+            _db.QuizStandings.Update(quizStandings);
+            _db.SaveChanges();
         }
 
         public IActionResult AddFavoriteTeam()

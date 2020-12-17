@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FinalProject.Models
 {
-    public class Quiz2ResultViewModel
+    public class QuizResultViewModel
     {
         public string Answer { get; set; }
         public List<string> RandomAnswers { get; set; }

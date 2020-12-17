@@ -162,8 +162,7 @@ namespace FinalProject.Models
 
             modelBuilder.Entity<QuizStandings>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
+                entity.HasIndex(e => e.UserId);
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")
                     .HasMaxLength(450);
