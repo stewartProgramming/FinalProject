@@ -5,7 +5,7 @@
     ViewData["Title"] = "QuizLeaderboards";
 }
 
-<h1>Quiz Global Leaderboards</h1>
+<h1 style="text-align:center">Quiz Global Leaderboards</h1>
 
 <table class="table">
     <thead>
@@ -14,13 +14,13 @@
                 @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
-                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AttemptsSortParm"]">Quiz Attempts</a>
+                <a style="color: black" asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AttemptsSortParm"]">Quiz Attempts</a>
             </th>
             <th>
-                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["CorrectAnswersSortParm"]">Correct Answers</a>
+                <a style="color: black" asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["CorrectAnswersSortParm"]">Correct Answers</a>
             </th>
             <th>
-                <a asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AccuracySortParm"]">Accuracy</a>
+                <a style="color: black" asp-action="QuizLeaderboards" asp-route-sortOrder="@ViewData["AccuracySortParm"]">Accuracy</a>
             </th>
             <th></th>
         </tr>
