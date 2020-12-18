@@ -59,7 +59,7 @@ namespace FinalProject.Controllers
                     page = 1;
                 }
                 ViewBag.pageCount = page;
-                ViewBag.listCount = list.Count;                               
+                ViewBag.listCount = list.Count;
 
                 List<Highlight> currentList = list[(int)page - 1];
                 // attaching comments to videos 
@@ -73,10 +73,10 @@ namespace FinalProject.Controllers
             {
                 List<Highlight> emptyList = new List<Highlight> { };
                 return View(emptyList);
-            }            
+            }
         }
 
-        public List<Highlight> AttachCommentsToVideos (List<Highlight> currentList)
+        public List<Highlight> AttachCommentsToVideos(List<Highlight> currentList)
         {
             string currentEmbedForView;
             var videoComments = _db.VideoComments.ToList();
@@ -107,14 +107,14 @@ namespace FinalProject.Controllers
             }
             return currentList;
         }
-        public List<CommunityFavoriteVideos> AttachCommentsToCommunityFavoriteVideos (List<CommunityFavoriteVideos> currentList)
+        public List<CommunityFavoriteVideos> AttachCommentsToCommunityFavoriteVideos(List<CommunityFavoriteVideos> currentList)
         {
             string currentEmbedForView;
             var videoComments = _db.VideoComments.ToList();
             List<CommunityFavoriteVideos> matchingVideos = new List<CommunityFavoriteVideos>();
             var users = _db.AspNetUsers.ToList();
             // retrieving videos from FavoriteVideos table that has a comment
-            
+
             //foreach (var match in currentList)
             //{
             //        currentEmbedForView = match.;
@@ -157,7 +157,7 @@ namespace FinalProject.Controllers
                 VideoComments vc = new VideoComments
                 {
                     VideoId = _db.CommunityFavoriteVideos.Where(x => x.EmbedCode == videoEmbed).FirstOrDefault().Id,
-                    DateCreated = DateTime.Now.ToLocalTime(),
+                    DateCreated = DateTimeService.GetTimeNow(),
                     UserId = FindUser(),
                     VideoComment = comment
                 };
@@ -189,7 +189,7 @@ namespace FinalProject.Controllers
             {
                 _db.VideoComments.Remove(vc);
                 _db.SaveChanges();
-                var highlightCache =_highlightService.GetHighlights();
+                var highlightCache = _highlightService.GetHighlights();
                 // remove video comment from cache service
                 foreach (var page in highlightCache)
                 {
@@ -197,7 +197,7 @@ namespace FinalProject.Controllers
                     {
                         foreach (var video in match.videos)
                         {
-                            if(video.VideoComments != null)
+                            if (video.VideoComments != null)
                             {
                                 for (int i = 0; i < video.VideoComments.Count; i++)
                                 {
@@ -206,7 +206,7 @@ namespace FinalProject.Controllers
                                         video.VideoComments.RemoveAt(i);
                                     }
                                 }
-                            }                        
+                            }
                         }
                     }
                 }
@@ -219,7 +219,7 @@ namespace FinalProject.Controllers
         public IActionResult SubmitComment(int Id, string VideoComment)
         {
             VideoComments vc = _db.VideoComments.Find(Id);
-            if(vc.UserId == FindUser())
+            if (vc.UserId == FindUser())
             {
                 vc.VideoComment = VideoComment;
                 _db.VideoComments.Update(vc);
@@ -278,19 +278,19 @@ namespace FinalProject.Controllers
         public IActionResult SearchHighlights(string searchFor, int? page)
         {
             List<List<Highlight>> list = _highlightService.SearchHighlights(searchFor);
+            if (page == null)
+            {
+                page = 1;
+            }
+
+            ViewBag.pageCount = page;
+            ViewBag.listCount = list.Count;
+
+            var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
+            ViewBag.Search = beautifiedSearch;
+
             if (list.Any())
             {
-                if (page == null)
-                {
-                    page = 1;
-                }
-
-                ViewBag.pageCount = page;
-                ViewBag.listCount = list.Count;
-
-                var beautifiedSearch = string.Join(" ", searchFor.ToLower().Split(" ").Select(word => $"{char.ToUpper(word[0])}{word.Substring(1)}"));
-                ViewBag.Search = beautifiedSearch;
-
                 SearchPageModel search = new SearchPageModel();
                 search.AnotherHighlight = list[(int)page - 1];
                 search.SearchFor = searchFor;
@@ -300,9 +300,11 @@ namespace FinalProject.Controllers
 
                 return View(search);
             }
-            return RedirectToAction("Index");
+            SearchPageModel emptyList = new SearchPageModel();
+
+            return View(emptyList);
         }
-        
+
         public IActionResult FavoriteHighlights()
         {
             string currentUser = FindUser();
@@ -374,7 +376,6 @@ namespace FinalProject.Controllers
                     break;
             }
 
-
             // Calls the standings API based on league of teams playing
             var results = _footballDAL.GetStandings(league, "2020");
             var standings = results.response[0].league.standings[0];
@@ -382,20 +383,20 @@ namespace FinalProject.Controllers
 
             // Filtering through standings and grabbing selected teams (from match results view)
             foreach (var item in standings)
- 
             {
                 if (item.team.name == team1)
                 {
                     standingslist.Add(item);
+                    break;
                 }
             }
 
             foreach (var item in standings)
-
             {
                 if (item.team.name == team2)
                 {
                     standingslist.Add(item);
+                    break;
                 }
             }
 
@@ -570,7 +571,7 @@ namespace FinalProject.Controllers
                     team = "Leeds";
                     break;
                 case "Sheffield United FC":
-                    team = "Sheffield";
+                    team = "Sheffield Utd";
                     break;
                 default:
                     break;
@@ -1021,7 +1022,7 @@ namespace FinalProject.Controllers
             string currentUser = FindUser();
             QuizStandings currentStanding = _db.QuizStandings.Find(currentUser);
             // adds user to QuizStandings table if user does not exist
-            if(currentStanding == null)
+            if (currentStanding == null)
             {
                 QuizStandings newQS = new QuizStandings
                 {
@@ -1036,7 +1037,7 @@ namespace FinalProject.Controllers
             else
             {
                 return currentStanding;
-            }            
+            }
         }
 
         public IActionResult QuizLeaderboards(string sortOrder)
